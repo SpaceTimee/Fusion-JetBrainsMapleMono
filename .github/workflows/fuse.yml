@@ -19,12 +19,9 @@ jobs:
       - name: 🔍 Check Latest Commit Updates
         id: check_commit
         run: |
+          # 获取最新的 commit SHA
           JETBRAINS_COMMIT=$(git ls-remote https://github.com/JetBrains/JetBrainsMono.git refs/heads/master | awk '{print $1}')
           MAPLE_COMMIT=$(git ls-remote https://github.com/subframe7536/maple-font.git refs/heads/main | awk '{print $1}')
-
-          # 获取最新的 commit 消息
-          JETBRAINS_COMMIT_MSG=$(git log --format=%B -n 1 $JETBRAINS_COMMIT)
-          MAPLE_COMMIT_MSG=$(git log --format=%B -n 1 $MAPLE_COMMIT)
 
           echo "Latest JetBrains Mono Commit: $JETBRAINS_COMMIT"
           echo "Latest Maple Font Commit: $MAPLE_COMMIT"
@@ -36,8 +33,20 @@ jobs:
             echo "is_updated=true" >> $GITHUB_OUTPUT
             echo "$JETBRAINS_COMMIT" > jetbrains_commit.txt
             echo "$MAPLE_COMMIT" > maple_commit.txt
-            echo "$JETBRAINS_COMMIT_MSG" > jetbrains_commit_msg.txt  # 保存 commit 消息
-            echo "$MAPLE_COMMIT_MSG" > maple_commit_msg.txt  # 保存 commit 消息
+
+            # 克隆 JetBrains Mono 仓库（仅获取最新 commit）
+            git clone --depth 1 https://github.com/JetBrains/JetBrainsMono.git jetbrains_mono_repo
+            cd jetbrains_mono_repo
+            JETBRAINS_COMMIT_MSG=$(git log -1 --pretty=%B)
+            cd ..
+            echo "$JETBRAINS_COMMIT_MSG" > jetbrains_commit_msg.txt
+
+            # 克隆 Maple Font 仓库（仅获取最新 commit）
+            git clone --depth 1 https://github.com/subframe7536/maple-font.git maple_font_repo
+            cd maple_font_repo
+            MAPLE_COMMIT_MSG=$(git log -1 --pretty=%B)
+            cd ..
+            echo "$MAPLE_COMMIT_MSG" > maple_commit_msg.txt
           else
             echo "is_updated=false" >> $GITHUB_OUTPUT
           fi
