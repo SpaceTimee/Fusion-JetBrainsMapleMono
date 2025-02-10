@@ -37,6 +37,8 @@ jobs:
           # 保存最新版本号为 artifact
           echo "$JETBRAINS_LATEST_VERSION" > jetbrains_version.txt
           gh release create "JetBrainsMonoVersion" jetbrains_version.txt
+        env:
+          GH_TOKEN: ${{ secrets.FUSION_JET_BRAINS_MAPLE_MONO_TOKEN }}
 
       - name: 🔽 Download Latest Maple Font Release Version
         run: |
@@ -57,6 +59,9 @@ jobs:
           # 保存最新版本号为 artifact
           echo "$MAPLE_LATEST_VERSION" > maple_version.txt
           gh release create "MapleFontVersion" maple_version.txt
+        env:
+          GH_TOKEN: ${{ secrets.FUSION_JET_BRAINS_MAPLE_MONO_TOKEN }}
+
 
       - name: 🔽 Download Latest JetBrains Mono
         run: |
