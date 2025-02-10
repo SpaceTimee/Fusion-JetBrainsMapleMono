@@ -72,8 +72,8 @@ jobs:
 
       - name: 📦 Install Dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y python python-venv python-dev fontforge
+          # sudo apt-get update
+          # sudo apt-get install -y python python-venv python-dev fontforge
           python -m venv venv
           source venv/bin/activate || . venv/bin/activate
           pip install gftools fonttools
