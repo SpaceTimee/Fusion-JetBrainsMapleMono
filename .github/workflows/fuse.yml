@@ -68,7 +68,6 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.FUSION_JET_BRAINS_MAPLE_MONO_TOKEN }}
 
-
       - name: 🔽 Download Latest JetBrains Mono
         if: steps.compare-jetbrains-releases.outputs.is_updated == 'true' || steps.compare-maple-releases.outputs.is_updated == 'true'
         run: |
@@ -86,48 +85,76 @@ jobs:
       - name: 🎯 Merge JetBrains Mono & Maple Font
         if: steps.compare-jetbrains-releases.outputs.is_updated == 'true' || steps.compare-maple-releases.outputs.is_updated == 'true'
         run: |
-          JETBRAINS_FONT=$(find fonts/jetbrains/fonts/ttf -name "JetBrainsMono-Regular.ttf" | head -n 1)
-          MAPLE_FONT=$(find fonts/maple -name "MapleMonoNormal-CN-Regular.ttf" | head -n 1)
-          echo "JetBrains Font Path: $JETBRAINS_FONT"
-          echo "Maple Font Path: $MAPLE_FONT"
-          pyftmerge "$MAPLE_FONT" "$JETBRAINS_FONT"
-          mv merged.ttf MergedFont.ttf
+          mkdir -p merged_fonts
+          declare -A font_map=(
+            ["ExtraLight"]="ExtraLight"
+            ["ExtraLightItalic"]="ExtraLightItalic"
+            ["Italic"]="Italic"
+            ["Light"]="Light"
+            ["LightItalic"]="LightItalic"
+            ["Medium"]="Medium"
+            ["MediumItalic"]="MediumItalic"
+            ["Regular"]="Regular"
+            ["SemiBold"]="SemiBold"
+            ["SemiBoldItalic"]="SemiBoldItalic"
+            ["Thin"]="Thin"
+            ["ThinItalic"]="ThinItalic"
+            ["Bold"]="Bold"
+            ["BoldItalic"]="BoldItalic"
+            ["ExtraBold"]="ExtraBold"
+            ["ExtraBoldItalic"]="ExtraBoldItalic"
+          )
+
+          for key in "${!font_map[@]}"; do
+            MAPLE_FONT="fonts/maple/MapleMonoNormal-CN-${font_map[$key]}.ttf"
+            JETBRAINS_FONT="fonts/jetbrains/fonts/ttf/JetBrainsMono-${key}.ttf"
+
+            if [[ -f "$MAPLE_FONT" && -f "$JETBRAINS_FONT" ]]; then
+              echo "Merging: $JETBRAINS_FONT + $MAPLE_FONT"
+              pyftmerge "$MAPLE_FONT" "$JETBRAINS_FONT"
+              mv merged.ttf "merged_fonts/JetBrainsMapleMono-${key}.ttf"
+            else
+              echo "Skipping: Missing font pair for $key"
+            fi
+          done
 
       - name: ✍️ Modify Font Name
         if: steps.compare-jetbrains-releases.outputs.is_updated == 'true' || steps.compare-maple-releases.outputs.is_updated == 'true'
         run: |
           python3 -c "
           from fontTools.ttLib import TTFont
+          import os
 
-          # 打开合并后的字体
-          font = TTFont('MergedFont.ttf')
+          font_dir = 'merged_fonts'
+          for font_file in os.listdir(font_dir):
+              if font_file.endswith('.ttf'):
+                  font_path = os.path.join(font_dir, font_file)
+                  font = TTFont(font_path)
 
-          # 修改字体名称（例如修改 'FullName' 和 'FamilyName'）
-          name_table = font['name']
-          for record in name_table.names:
-            if record.nameID == 1:
-              record.string = 'NewFontFamily'.encode('utf-16-be')
-            elif record.nameID == 4:
-              record.string = 'New Full Font Name'.encode('utf-16-be')
+                  name_table = font['name']
+                  for record in name_table.names:
+                      if record.nameID == 1:  # Family Name
+                          record.string = 'JetBrainsMapleMono'.encode('utf-16-be')
+                      elif record.nameID == 4:  # Full Name
+                          record.string = font_file.replace('.ttf', '').encode('utf-16-be')
 
-          # 保存为新的字体文件
-          font.save('JetBrainsMapleMono.ttf')
+                  font.save(font_path)
           "
 
-      - name: 📤 Upload Merged Font
+      - name: 📤 Upload Merged Fonts
         if: steps.compare-jetbrains-releases.outputs.is_updated == 'true' || steps.compare-maple-releases.outputs.is_updated == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: MergedFont
-          path: JetBrainsMapleMono.ttf
+          name: MergedFonts
+          path: merged_fonts/*.ttf
 
       - name: 🚀 Publish to GitHub Releases
         if: steps.compare-jetbrains-releases.outputs.is_updated == 'true' || steps.compare-maple-releases.outputs.is_updated == 'true'
         uses: softprops/action-gh-release@v1
         with:
-          files: JetBrainsMapleMono.ttf
+          files: merged_fonts/*.ttf
           tag_name: latest
-          name: "Latest Merged Font"
+          name: "Latest Merged Fonts"
           draft: false
           prerelease: false
           token: ${{ secrets.FUSION_JET_BRAINS_MAPLE_MONO_TOKEN }}
