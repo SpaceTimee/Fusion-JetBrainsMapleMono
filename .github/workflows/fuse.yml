@@ -100,6 +100,7 @@ jobs:
           python build.py --normal --no-hinted --no-nerd-font --ttf-only --liga
           cd ..
           mkdir -p fonts/maple
+          ls
           cp -r maple-font/fonts/ttf/* fonts/maple/
 
       - name: 🎯 Fuse JetBrains Mono & Maple Font
