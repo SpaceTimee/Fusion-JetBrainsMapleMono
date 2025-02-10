@@ -17,36 +17,46 @@ jobs:
       - name: 📦 Install Dependencies
         run: pip install fonttools
 
-      - name: 🔽 Check Latest JetBrains Mono Release Version
+      - name: 🔽 Download Latest JetBrains Mono Release Version
         run: |
           # 获取 JetBrains Mono 的最新发布版本
           JETBRAINS_LATEST_VERSION=$(curl -s https://api.github.com/repos/JetBrains/JetBrainsMono/releases/latest | jq -r .tag_name)
           echo "JetBrains Mono Latest Release Version: $JETBRAINS_LATEST_VERSION"
-          
-          # 检查之前保存的版本
-          if [[ -f "previous_jetbrains_version.txt" ]]; then
-            PREVIOUS_JETBRAINS_VERSION=$(cat previous_jetbrains_version.txt)
+
+          # 下载版本号 artifact，如果存在的话
+          if gh release view "JetBrainsMonoVersion" >/dev/null 2>&1; then
+            echo "JetBrains Mono Version artifact found, downloading it."
+            gh release download "JetBrainsMonoVersion" --pattern "jetbrains_version.txt"
+            PREVIOUS_JETBRAINS_VERSION=$(cat jetbrains_version.txt)
             if [[ "$JETBRAINS_LATEST_VERSION" == "$PREVIOUS_JETBRAINS_VERSION" ]]; then
               echo "JetBrains Mono version is not updated. Skipping download."
-              exit 0  # 退出脚本，跳过后续步骤
+              exit 0  # 跳过后续步骤
             fi
           fi
-          # 保存最新版本信息，以备下次比较
-          echo "$JETBRAINS_LATEST_VERSION" > previous_jetbrains_version.txt
 
-      - name: 🔽 Check Latest Maple Font Release Version
+          # 保存最新版本号为 artifact
+          echo "$JETBRAINS_LATEST_VERSION" > jetbrains_version.txt
+          gh release create "JetBrainsMonoVersion" jetbrains_version.txt
+
+      - name: 🔽 Download Latest Maple Font Release Version
         run: |
           MAPLE_LATEST_VERSION=$(curl -s https://api.github.com/repos/subframe7536/maple-font/releases/latest | jq -r .tag_name)
           echo "Maple Font Latest Release Version: $MAPLE_LATEST_VERSION"
-          
-          if [[ -f "previous_maple_version.txt" ]]; then
-            PREVIOUS_MAPLE_VERSION=$(cat previous_maple_version.txt)
+
+          # 下载版本号 artifact，如果存在的话
+          if gh release view "MapleFontVersion" >/dev/null 2>&1; then
+            echo "Maple Font Version artifact found, downloading it."
+            gh release download "MapleFontVersion" --pattern "maple_version.txt"
+            PREVIOUS_MAPLE_VERSION=$(cat maple_version.txt)
             if [[ "$MAPLE_LATEST_VERSION" == "$PREVIOUS_MAPLE_VERSION" ]]; then
               echo "Maple Font version is not updated. Skipping download."
               exit 0  # 跳过后续步骤
             fi
           fi
-          echo "$MAPLE_LATEST_VERSION" > previous_maple_version.txt
+
+          # 保存最新版本号为 artifact
+          echo "$MAPLE_LATEST_VERSION" > maple_version.txt
+          gh release create "MapleFontVersion" maple_version.txt
 
       - name: 🔽 Download Latest JetBrains Mono
         run: |
