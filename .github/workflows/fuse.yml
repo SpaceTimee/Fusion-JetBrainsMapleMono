@@ -56,32 +56,32 @@ jobs:
             echo "is_updated=false" >> $GITHUB_OUTPUT
           fi
 
-  merge_and_commit:
-    needs: check_updates
-    if: needs.check_updates.outputs.is_commit_updated == 'true'
-    runs-on: ubuntu-latest
+  # merge_and_commit:
+  #   needs: check_updates
+  #   if: needs.check_updates.outputs.is_commit_updated == 'true'
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - name: 🔄 Checkout Repository
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: 🔄 Checkout Repository
+  #       uses: actions/checkout@v4
 
-      - name: 📦 Install Dependencies
-        run: pip install fonttools
+  #     - name: 📦 Install Dependencies
+  #       run: pip install fonttools
 
-      - name: 🛠️ Ensure merge_fonts.sh is executable
-        run: chmod +x ./merge_fonts.sh
+  #     - name: 🛠️ Ensure merge_fonts.sh is executable
+  #       run: chmod +x ./merge_fonts.sh
 
-      - name: 🔽 Download and Merge Fonts
-        run: |
-          ./merge_fonts.sh  # 调用合并字体的脚本
+  #     - name: 🔽 Download and Merge Fonts
+  #       run: |
+  #         ./merge_fonts.sh  # 调用合并字体的脚本
 
-      - name: ✍️ Commit and Push Merged Fonts
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
-          git add merged_fonts/*.ttf jetbrains_commit.txt maple_commit.txt
-          git commit -m "Auto-merge latest JetBrains Mono and Maple Font (new commit detected)"
-          git push
+  #     - name: ✍️ Commit and Push Merged Fonts
+  #       run: |
+  #         git config --global user.name "github-actions"
+  #         git config --global user.email "github-actions@github.com"
+  #         git add merged_fonts/*.ttf jetbrains_commit.txt maple_commit.txt
+  #         git commit -m "Auto-merge latest JetBrains Mono and Maple Font (new commit detected)"
+  #         git push
 
   merge_and_release:
     needs: check_updates
@@ -102,12 +102,16 @@ jobs:
         run: |
           ./merge_fonts.sh  # 调用合并字体的脚本
 
+      - name: 📦 Create ZIP Archive
+        run: |
+          zip -r JetBrainsMapleMono.zip merged_fonts/
+
       - name: 🚀 Publish to GitHub Releases
         uses: softprops/action-gh-release@v1
         with:
-          files: merged_fonts/*.ttf
+          files: JetBrainsMapleMono.zip
           tag_name: latest
-          name: "Latest Merged Fonts"
+          name: "Latest Merged Font"
           draft: false
           prerelease: false
         env:
