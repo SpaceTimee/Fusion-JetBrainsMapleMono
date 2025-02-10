@@ -32,7 +32,7 @@ jobs:
       - name: 🎯 Merge JetBrains Mono & Maple Font
         run: |
           JETBRAINS_FONT=$(find fonts/jetbrains/fonts/ttf -name "JetBrainsMono-Regular.ttf" | head -n 1)
-          MAPLE_FONT=$(find fonts/maple -name "MapleMonoNormal-CN-Regular.ttf  " | head -n 1)
+          MAPLE_FONT=$(find fonts/maple -name "MapleMonoNormal-CN-Regular.ttf" | head -n 1)
           echo "JetBrains Font Path: $JETBRAINS_FONT"
           echo "Maple Font Path: $MAPLE_FONT"
           pyftmerge "$JETBRAINS_FONT" "$MAPLE_FONT"
