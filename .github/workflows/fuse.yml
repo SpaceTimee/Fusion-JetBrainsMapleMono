@@ -52,4 +52,4 @@ jobs:
           name: "Latest Merged Font"
           draft: false
           prerelease: false
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.FUSION_JET_BRAINS_MAPLE_MONO_TOKEN }}
