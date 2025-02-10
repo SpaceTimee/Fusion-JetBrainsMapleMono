@@ -64,18 +64,21 @@ jobs:
 
 
       - name: 🔽 Download Latest JetBrains Mono
+        if: success()
         run: |
           JETBRAINS_LATEST=$(curl -s https://api.github.com/repos/JetBrains/JetBrainsMono/releases/latest | grep "browser_download_url" | cut -d '"' -f 4)
           wget -O jetbrains-mono.zip "$JETBRAINS_LATEST"
           mkdir -p fonts/jetbrains && unzip jetbrains-mono.zip -d fonts/jetbrains
 
       - name: 🔽 Download Latest Maple Font
+        if: success()
         run: |
           MAPLE_LATEST=$(curl -s https://api.github.com/repos/subframe7536/maple-font/releases/latest | grep "browser_download_url" | grep "MapleMonoNormal-CN-unhinted.zip" | cut -d '"' -f 4)
           wget -O maple-font.zip "$MAPLE_LATEST"
           mkdir -p fonts/maple && unzip maple-font.zip -d fonts/maple
 
       - name: 🎯 Merge JetBrains Mono & Maple Font
+        if: success()
         run: |
           JETBRAINS_FONT=$(find fonts/jetbrains/fonts/ttf -name "JetBrainsMono-Regular.ttf" | head -n 1)
           MAPLE_FONT=$(find fonts/maple -name "MapleMonoNormal-CN-Regular.ttf" | head -n 1)
@@ -85,6 +88,7 @@ jobs:
           mv merged.ttf MergedFont.ttf
 
       - name: ✍️ Modify Font Name
+        if: success()
         run: |
           python3 -c "
           from fontTools.ttLib import TTFont
@@ -105,12 +109,14 @@ jobs:
           "
 
       - name: 📤 Upload Merged Font
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: MergedFont
           path: JetBrainsMapleMono.ttf
 
       - name: 🚀 Publish to GitHub Releases
+        if: success()
         uses: softprops/action-gh-release@v1
         with:
           files: JetBrainsMapleMono.ttf
