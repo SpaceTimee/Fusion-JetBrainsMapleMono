@@ -68,7 +68,7 @@ jobs:
       - name: 🐍 Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: 'latest'
+          python-version: "latest"
 
       - name: 📦 Install Dependencies
         run: |
