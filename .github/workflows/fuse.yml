@@ -110,6 +110,7 @@ jobs:
             MAPLE_FONT="fonts/maple/MapleMonoNormal-${style}.ttf"
             if [[ -f "$JETBRAINS_FONT" && -f "$MAPLE_FONT" ]]; then
               echo "Fusing $JETBRAINS_FONT and $MAPLE_FONT..."
+              source venv/bin/activate || . venv/bin/activate
               pyftfuse "$MAPLE_FONT" "$JETBRAINS_FONT"
               mv fused.ttf "fused_fonts/JetBrainsMapleMono-${style}.ttf"
             fi
@@ -136,7 +137,9 @@ jobs:
         run: pip install fonttools
 
       - name: 🛠️ Ensure fuse_fonts.sh is executable
-        run: chmod +x ./fuse_fonts.sh
+        run: |
+          cd .github/workflows
+          chmod +x ./fuse_fonts.sh
 
       - name: 🔽 Download and Fuse Fonts
         run: |
