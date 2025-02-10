@@ -16,25 +16,25 @@ jobs:
       - name: 🔄 Checkout Repository
         uses: actions/checkout@v4
 
-      # - name: 🔍 Check Latest Commit Updates
-      #   id: check_commit
-      #   run: |
-      #     JETBRAINS_COMMIT=$(git ls-remote https://github.com/JetBrains/JetBrainsMono.git refs/heads/master | awk '{print $1}')
-      #     MAPLE_COMMIT=$(git ls-remote https://github.com/subframe7536/maple-font.git refs/heads/main | awk '{print $1}')
+      - name: 🔍 Check Latest Commit Updates
+        id: check_commit
+        run: |
+          JETBRAINS_COMMIT=$(git ls-remote https://github.com/JetBrains/JetBrainsMono.git refs/heads/master | awk '{print $1}')
+          MAPLE_COMMIT=$(git ls-remote https://github.com/subframe7536/maple-font.git refs/heads/main | awk '{print $1}')
 
-      #     echo "Latest JetBrains Mono Commit: $JETBRAINS_COMMIT"
-      #     echo "Latest Maple Font Commit: $MAPLE_COMMIT"
+          echo "Latest JetBrains Mono Commit: $JETBRAINS_COMMIT"
+          echo "Latest Maple Font Commit: $MAPLE_COMMIT"
 
-      #     PREV_JETBRAINS_COMMIT=$(cat jetbrains_commit.txt 2>/dev/null || echo "")
-      #     PREV_MAPLE_COMMIT=$(cat maple_commit.txt 2>/dev/null || echo "")
+          PREV_JETBRAINS_COMMIT=$(cat jetbrains_commit.txt 2>/dev/null || echo "")
+          PREV_MAPLE_COMMIT=$(cat maple_commit.txt 2>/dev/null || echo "")
 
-      #     if [[ "$JETBRAINS_COMMIT" != "$PREV_JETBRAINS_COMMIT" || "$MAPLE_COMMIT" != "$PREV_MAPLE_COMMIT" ]]; then
-      #       echo "is_updated=true" >> $GITHUB_OUTPUT
-      #       echo "$JETBRAINS_COMMIT" > jetbrains_commit.txt
-      #       echo "$MAPLE_COMMIT" > maple_commit.txt
-      #     else
-      #       echo "is_updated=false" >> $GITHUB_OUTPUT
-      #     fi
+          if [[ "$JETBRAINS_COMMIT" != "$PREV_JETBRAINS_COMMIT" || "$MAPLE_COMMIT" != "$PREV_MAPLE_COMMIT" ]]; then
+            echo "is_updated=true" >> $GITHUB_OUTPUT
+            echo "$JETBRAINS_COMMIT" > jetbrains_commit.txt
+            echo "$MAPLE_COMMIT" > maple_commit.txt
+          else
+            echo "is_updated=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: 🔍 Check Latest Release Updates
         id: check_release
@@ -56,32 +56,64 @@ jobs:
             echo "is_updated=false" >> $GITHUB_OUTPUT
           fi
 
-  # fuse_and_commit:
-  #   needs: check_updates
-  #   if: needs.check_updates.outputs.is_commit_updated == 'true'
-  #   runs-on: ubuntu-latest
+  fuse_and_commit:
+    needs: check_updates
+    if: needs.check_updates.outputs.is_commit_updated == 'true'
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #     - name: 🔄 Checkout Repository
-  #       uses: actions/checkout@v4
+    steps:
+      - name: 🔄 Checkout Repository
+        uses: actions/checkout@v4
 
-  #     - name: 📦 Install Dependencies
-  #       run: pip install fonttools
+      - name: 📦 Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3.9 python3.9-venv python3.9-dev fontforge
+          python3.9 -m venv venv
+          source venv/bin/activate
+          pip install gftools fonttools
 
-  #     - name: 🛠️ Ensure fuse_fonts.sh is executable
-  #       run: chmod +x ./fuse_fonts.sh
+      - name: 🔽 Clone and Build JetBrains Mono from Source
+        run: |
+          git clone --depth 1 https://github.com/JetBrains/JetBrainsMono.git
+          cd JetBrainsMono
+          gftools builder sources/config.yaml
+          cd ..
+          mkdir -p fonts/jetbrains
+          cp -r JetBrainsMono/fonts/ttf/* fonts/jetbrains/
 
-  #     - name: 🔽 Download and Fuse Fonts
-  #       run: |
-  #         ./fuse_fonts.sh  # 调用合并字体的脚本
+      - name: 🔽 Clone and Build Maple Font from Source
+        run: |
+          git clone --depth 1 https://github.com/subframe7536/maple-font.git
+          cd maple-font
+          python3.9 -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+          python build.py --cn --no-liga
+          cd ..
+          mkdir -p fonts/maple
+          cp -r maple-font/build/MapleMono/MapleMono\ CN/ttf/* fonts/maple/
 
-  #     - name: ✍️ Commit and Push Fused Fonts
-  #       run: |
-  #         git config --global user.name "github-actions"
-  #         git config --global user.email "github-actions@github.com"
-  #         git add fused_fonts/*.ttf jetbrains_commit.txt maple_commit.txt
-  #         git commit -m "Auto-fuse latest JetBrains Mono and Maple Font (new commit detected)"
-  #         git push
+      - name: 🎯 Fuse JetBrains Mono & Maple Font
+        run: |
+          mkdir -p fused_fonts
+          for style in Regular Bold Italic BoldItalic ExtraLight ExtraLightItalic Light LightItalic Medium MediumItalic SemiBold SemiBoldItalic Thin ThinItalic ExtraBold ExtraBoldItalic; do
+            JETBRAINS_FONT="fonts/jetbrains/JetBrainsMono-${style}.ttf"
+            MAPLE_FONT="fonts/maple/MapleMonoCN-${style}.ttf"
+            if [[ -f "$JETBRAINS_FONT" && -f "$MAPLE_FONT" ]]; then
+              echo "Fusing $JETBRAINS_FONT and $MAPLE_FONT..."
+              pyftfuse "$MAPLE_FONT" "$JETBRAINS_FONT"
+              mv fused.ttf "fused_fonts/JetBrainsMapleMono-${style}.ttf"
+            fi
+          done
+
+      - name: ✍️ Commit and Push Fused Fonts
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add fused_fonts/*.ttf jetbrains_commit.txt maple_commit.txt
+          git commit -m "Auto-fuse latest JetBrains Mono and Maple Font (new commit detected)"
+          git push
 
   fuse_and_release:
     needs: check_updates
