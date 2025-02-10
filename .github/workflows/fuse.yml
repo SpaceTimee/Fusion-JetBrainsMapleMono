@@ -16,25 +16,25 @@ jobs:
       - name: 🔄 Checkout Repository
         uses: actions/checkout@v4
 
-      - name: 🔍 Check Latest Commit Updates
-        id: check_commit
-        run: |
-          JETBRAINS_COMMIT=$(git ls-remote https://github.com/JetBrains/JetBrainsMono.git refs/heads/master | awk '{print $1}')
-          MAPLE_COMMIT=$(git ls-remote https://github.com/subframe7536/maple-font.git refs/heads/main | awk '{print $1}')
+      # - name: 🔍 Check Latest Commit Updates
+      #   id: check_commit
+      #   run: |
+      #     JETBRAINS_COMMIT=$(git ls-remote https://github.com/JetBrains/JetBrainsMono.git refs/heads/master | awk '{print $1}')
+      #     MAPLE_COMMIT=$(git ls-remote https://github.com/subframe7536/maple-font.git refs/heads/main | awk '{print $1}')
 
-          echo "Latest JetBrains Mono Commit: $JETBRAINS_COMMIT"
-          echo "Latest Maple Font Commit: $MAPLE_COMMIT"
+      #     echo "Latest JetBrains Mono Commit: $JETBRAINS_COMMIT"
+      #     echo "Latest Maple Font Commit: $MAPLE_COMMIT"
 
-          PREV_JETBRAINS_COMMIT=$(cat jetbrains_commit.txt 2>/dev/null || echo "")
-          PREV_MAPLE_COMMIT=$(cat maple_commit.txt 2>/dev/null || echo "")
+      #     PREV_JETBRAINS_COMMIT=$(cat jetbrains_commit.txt 2>/dev/null || echo "")
+      #     PREV_MAPLE_COMMIT=$(cat maple_commit.txt 2>/dev/null || echo "")
 
-          if [[ "$JETBRAINS_COMMIT" != "$PREV_JETBRAINS_COMMIT" || "$MAPLE_COMMIT" != "$PREV_MAPLE_COMMIT" ]]; then
-            echo "is_updated=true" >> $GITHUB_OUTPUT
-            echo "$JETBRAINS_COMMIT" > jetbrains_commit.txt
-            echo "$MAPLE_COMMIT" > maple_commit.txt
-          else
-            echo "is_updated=false" >> $GITHUB_OUTPUT
-          fi
+      #     if [[ "$JETBRAINS_COMMIT" != "$PREV_JETBRAINS_COMMIT" || "$MAPLE_COMMIT" != "$PREV_MAPLE_COMMIT" ]]; then
+      #       echo "is_updated=true" >> $GITHUB_OUTPUT
+      #       echo "$JETBRAINS_COMMIT" > jetbrains_commit.txt
+      #       echo "$MAPLE_COMMIT" > maple_commit.txt
+      #     else
+      #       echo "is_updated=false" >> $GITHUB_OUTPUT
+      #     fi
 
       - name: 🔍 Check Latest Release Updates
         id: check_release
@@ -56,7 +56,7 @@ jobs:
             echo "is_updated=false" >> $GITHUB_OUTPUT
           fi
 
-  # merge_and_commit:
+  # fuse_and_commit:
   #   needs: check_updates
   #   if: needs.check_updates.outputs.is_commit_updated == 'true'
   #   runs-on: ubuntu-latest
@@ -68,22 +68,22 @@ jobs:
   #     - name: 📦 Install Dependencies
   #       run: pip install fonttools
 
-  #     - name: 🛠️ Ensure merge_fonts.sh is executable
-  #       run: chmod +x ./merge_fonts.sh
+  #     - name: 🛠️ Ensure fuse_fonts.sh is executable
+  #       run: chmod +x ./fuse_fonts.sh
 
-  #     - name: 🔽 Download and Merge Fonts
+  #     - name: 🔽 Download and Fuse Fonts
   #       run: |
-  #         ./merge_fonts.sh  # 调用合并字体的脚本
+  #         ./fuse_fonts.sh  # 调用合并字体的脚本
 
-  #     - name: ✍️ Commit and Push Merged Fonts
+  #     - name: ✍️ Commit and Push Fused Fonts
   #       run: |
   #         git config --global user.name "github-actions"
   #         git config --global user.email "github-actions@github.com"
-  #         git add merged_fonts/*.ttf jetbrains_commit.txt maple_commit.txt
-  #         git commit -m "Auto-merge latest JetBrains Mono and Maple Font (new commit detected)"
+  #         git add fused_fonts/*.ttf jetbrains_commit.txt maple_commit.txt
+  #         git commit -m "Auto-fuse latest JetBrains Mono and Maple Font (new commit detected)"
   #         git push
 
-  merge_and_release:
+  fuse_and_release:
     needs: check_updates
     if: needs.check_updates.outputs.is_release_updated == 'true'
     runs-on: ubuntu-latest
@@ -95,23 +95,23 @@ jobs:
       - name: 📦 Install Dependencies
         run: pip install fonttools
 
-      - name: 🛠️ Ensure merge_fonts.sh is executable
-        run: chmod +x ./merge_fonts.sh
+      - name: 🛠️ Ensure fuse_fonts.sh is executable
+        run: chmod +x ./fuse_fonts.sh
 
-      - name: 🔽 Download and Merge Fonts
+      - name: 🔽 Download and Fuse Fonts
         run: |
-          ./merge_fonts.sh  # 调用合并字体的脚本
+          ./fuse_fonts.sh  # 调用合并字体的脚本
 
       - name: 📦 Create ZIP Archive
         run: |
-          zip -r JetBrainsMapleMono.zip merged_fonts/
+          zip -r JetBrainsMapleMono.zip fused_fonts/
 
       - name: 🚀 Publish to GitHub Releases
         uses: softprops/action-gh-release@v1
         with:
           files: JetBrainsMapleMono.zip
           tag_name: latest
-          name: "Latest Merged Font"
+          name: "Latest Fused Font"
           draft: false
           prerelease: false
         env:
