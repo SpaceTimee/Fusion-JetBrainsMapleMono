@@ -95,7 +95,6 @@ jobs:
 
       - name: 🎯 Fuse JetBrains Mono & Maple Font
         run: |
-          pip install fonttools
           mkdir -p fused_fonts
           for style in Regular Bold Italic BoldItalic ExtraLight ExtraLightItalic Light LightItalic Medium MediumItalic SemiBold SemiBoldItalic Thin ThinItalic ExtraBold ExtraBoldItalic; do
             JETBRAINS_FONT="fonts/jetbrains/JetBrainsMono-${style}.ttf"
@@ -103,7 +102,7 @@ jobs:
             if [[ -f "$JETBRAINS_FONT" && -f "$MAPLE_FONT" ]]; then
               echo "Fusing $JETBRAINS_FONT and $MAPLE_FONT..."
               pyftmerge "$MAPLE_FONT" "$JETBRAINS_FONT"
-              mv fused.ttf "fused_fonts/JetBrainsMapleMono-${style}.ttf"
+              mv merged.ttf "fused_fonts/JetBrainsMapleMono-${style}.ttf"
             fi
           done
 
