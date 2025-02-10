@@ -2,12 +2,63 @@ name: Fuse Typefaces
 
 on:
   schedule:
-    - cron: "0 * * * *" # run per hour
-
+    - cron: "0 * * * *" # 每小时运行一次
   workflow_dispatch:
 
 jobs:
-  merge_fonts:
+  check_updates:
+    runs-on: ubuntu-latest
+    outputs:
+      is_commit_updated: ${{ steps.check_commit.outputs.is_updated }}
+      is_release_updated: ${{ steps.check_release.outputs.is_updated }}
+
+    steps:
+      - name: 🔄 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🔍 Check Latest Commit Updates
+        id: check_commit
+        run: |
+          JETBRAINS_COMMIT=$(git ls-remote https://github.com/JetBrains/JetBrainsMono.git refs/heads/master | awk '{print $1}')
+          MAPLE_COMMIT=$(git ls-remote https://github.com/subframe7536/maple-font.git refs/heads/main | awk '{print $1}')
+
+          echo "Latest JetBrains Mono Commit: $JETBRAINS_COMMIT"
+          echo "Latest Maple Font Commit: $MAPLE_COMMIT"
+
+          PREV_JETBRAINS_COMMIT=$(cat jetbrains_commit.txt 2>/dev/null || echo "")
+          PREV_MAPLE_COMMIT=$(cat maple_commit.txt 2>/dev/null || echo "")
+
+          if [[ "$JETBRAINS_COMMIT" != "$PREV_JETBRAINS_COMMIT" || "$MAPLE_COMMIT" != "$PREV_MAPLE_COMMIT" ]]; then
+            echo "is_updated=true" >> $GITHUB_OUTPUT
+            echo "$JETBRAINS_COMMIT" > jetbrains_commit.txt
+            echo "$MAPLE_COMMIT" > maple_commit.txt
+          else
+            echo "is_updated=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 🔍 Check Latest Release Updates
+        id: check_release
+        run: |
+          JETBRAINS_RELEASE=$(curl -s https://api.github.com/repos/JetBrains/JetBrainsMono/releases/latest | jq -r '.tag_name')
+          MAPLE_RELEASE=$(curl -s https://api.github.com/repos/subframe7536/maple-font/releases/latest | jq -r '.tag_name')
+
+          echo "Latest JetBrains Mono Release: $JETBRAINS_RELEASE"
+          echo "Latest Maple Font Release: $MAPLE_RELEASE"
+
+          PREV_JETBRAINS_RELEASE=$(cat jetbrains_release.txt 2>/dev/null || echo "")
+          PREV_MAPLE_RELEASE=$(cat maple_release.txt 2>/dev/null || echo "")
+
+          if [[ "$JETBRAINS_RELEASE" != "$PREV_JETBRAINS_RELEASE" || "$MAPLE_RELEASE" != "$PREV_MAPLE_RELEASE" ]]; then
+            echo "is_updated=true" >> $GITHUB_OUTPUT
+            echo "$JETBRAINS_RELEASE" > jetbrains_release.txt
+            echo "$MAPLE_RELEASE" > maple_release.txt
+          else
+            echo "is_updated=false" >> $GITHUB_OUTPUT
+          fi
+
+  merge_and_commit:
+    needs: check_updates
+    if: needs.check_updates.outputs.is_commit_updated == 'true'
     runs-on: ubuntu-latest
 
     steps:
@@ -17,139 +68,41 @@ jobs:
       - name: 📦 Install Dependencies
         run: pip install fonttools
 
-      - name: 🔽 Download Latest JetBrains Mono Release Version
-        id: compare-jetbrains-releases
+      - name: 🛠️ Ensure merge_fonts.sh is executable
+        run: chmod +x ./merge_fonts.sh
+
+      - name: 🔽 Download and Merge Fonts
         run: |
-          # 获取 JetBrains Mono 的最新发布版本
-          JETBRAINS_LATEST_VERSION=$(curl -s https://api.github.com/repos/JetBrains/JetBrainsMono/releases/latest | jq -r .tag_name)
-          echo "JetBrains Mono Latest Release Version: $JETBRAINS_LATEST_VERSION"
+          ./merge_fonts.sh  # 调用合并字体的脚本
 
-          # 下载版本号 artifact，如果存在的话
-          if gh release view "JetBrainsMonoVersion" >/dev/null 2>&1; then
-            echo "JetBrains Mono Version artifact found, downloading it."
-            gh release download "JetBrainsMonoVersion" --pattern "jetbrains_version.txt"
-            PREVIOUS_JETBRAINS_VERSION=$(cat jetbrains_version.txt)
-            if [[ "$JETBRAINS_LATEST_VERSION" == "$PREVIOUS_JETBRAINS_VERSION" ]]; then
-              echo "JetBrains Mono version is not updated. Skipping download."
-              echo "::set-output name=is_updated::false"
-              exit 0  # 跳过后续步骤
-            fi
-          fi
-
-          # 保存最新版本号为 artifact
-          echo "::set-output name=is_updated::true"
-          echo "$JETBRAINS_LATEST_VERSION" > jetbrains_version.txt
-          gh release create "JetBrainsMonoVersion" jetbrains_version.txt
-        env:
-          GH_TOKEN: ${{ secrets.FUSION_JET_BRAINS_MAPLE_MONO_TOKEN }}
-
-      - name: 🔽 Download Latest Maple Font Release Version
-        id: compare-maple-releases
+      - name: ✍️ Commit and Push Merged Fonts
         run: |
-          MAPLE_LATEST_VERSION=$(curl -s https://api.github.com/repos/subframe7536/maple-font/releases/latest | jq -r .tag_name)
-          echo "Maple Font Latest Release Version: $MAPLE_LATEST_VERSION"
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add merged_fonts/*.ttf jetbrains_commit.txt maple_commit.txt
+          git commit -m "Auto-merge latest JetBrains Mono and Maple Font (new commit detected)"
+          git push
 
-          # 下载版本号 artifact，如果存在的话
-          if gh release view "MapleFontVersion" >/dev/null 2>&1; then
-            echo "Maple Font Version artifact found, downloading it."
-            gh release download "MapleFontVersion" --pattern "maple_version.txt"
-            PREVIOUS_MAPLE_VERSION=$(cat maple_version.txt)
-            if [[ "$MAPLE_LATEST_VERSION" == "$PREVIOUS_MAPLE_VERSION" ]]; then
-              echo "Maple Font version is not updated. Skipping download."
-              echo "::set-output name=is_updated::false"
-              exit 0  # 跳过后续步骤
-            fi
-          fi
+  merge_and_release:
+    needs: check_updates
+    if: needs.check_updates.outputs.is_release_updated == 'true'
+    runs-on: ubuntu-latest
 
-          # 保存最新版本号为 artifact
-          echo "::set-output name=is_updated::true"
-          echo "$MAPLE_LATEST_VERSION" > maple_version.txt
-          gh release create "MapleFontVersion" maple_version.txt
-        env:
-          GH_TOKEN: ${{ secrets.FUSION_JET_BRAINS_MAPLE_MONO_TOKEN }}
+    steps:
+      - name: 🔄 Checkout Repository
+        uses: actions/checkout@v4
 
-      - name: 🔽 Download Latest JetBrains Mono
-        if: steps.compare-jetbrains-releases.outputs.is_updated == 'true' || steps.compare-maple-releases.outputs.is_updated == 'true'
+      - name: 📦 Install Dependencies
+        run: pip install fonttools
+
+      - name: 🛠️ Ensure merge_fonts.sh is executable
+        run: chmod +x ./merge_fonts.sh
+
+      - name: 🔽 Download and Merge Fonts
         run: |
-          JETBRAINS_LATEST=$(curl -s https://api.github.com/repos/JetBrains/JetBrainsMono/releases/latest | grep "browser_download_url" | cut -d '"' -f 4)
-          wget -O jetbrains-mono.zip "$JETBRAINS_LATEST"
-          mkdir -p fonts/jetbrains && unzip jetbrains-mono.zip -d fonts/jetbrains
-
-      - name: 🔽 Download Latest Maple Font
-        if: steps.compare-jetbrains-releases.outputs.is_updated == 'true' || steps.compare-maple-releases.outputs.is_updated == 'true'
-        run: |
-          MAPLE_LATEST=$(curl -s https://api.github.com/repos/subframe7536/maple-font/releases/latest | grep "browser_download_url" | grep "MapleMonoNormal-CN-unhinted.zip" | cut -d '"' -f 4)
-          wget -O maple-font.zip "$MAPLE_LATEST"
-          mkdir -p fonts/maple && unzip maple-font.zip -d fonts/maple
-
-      - name: 🎯 Merge JetBrains Mono & Maple Font
-        if: steps.compare-jetbrains-releases.outputs.is_updated == 'true' || steps.compare-maple-releases.outputs.is_updated == 'true'
-        run: |
-          mkdir -p merged_fonts
-          declare -A font_map=(
-            ["ExtraLight"]="ExtraLight"
-            ["ExtraLightItalic"]="ExtraLightItalic"
-            ["Italic"]="Italic"
-            ["Light"]="Light"
-            ["LightItalic"]="LightItalic"
-            ["Medium"]="Medium"
-            ["MediumItalic"]="MediumItalic"
-            ["Regular"]="Regular"
-            ["SemiBold"]="SemiBold"
-            ["SemiBoldItalic"]="SemiBoldItalic"
-            ["Thin"]="Thin"
-            ["ThinItalic"]="ThinItalic"
-            ["Bold"]="Bold"
-            ["BoldItalic"]="BoldItalic"
-            ["ExtraBold"]="ExtraBold"
-            ["ExtraBoldItalic"]="ExtraBoldItalic"
-          )
-
-          for key in "${!font_map[@]}"; do
-            MAPLE_FONT="fonts/maple/MapleMonoNormal-CN-${font_map[$key]}.ttf"
-            JETBRAINS_FONT="fonts/jetbrains/fonts/ttf/JetBrainsMono-${key}.ttf"
-
-            if [[ -f "$MAPLE_FONT" && -f "$JETBRAINS_FONT" ]]; then
-              echo "Merging: $JETBRAINS_FONT + $MAPLE_FONT"
-              pyftmerge "$MAPLE_FONT" "$JETBRAINS_FONT"
-              mv merged.ttf "merged_fonts/JetBrainsMapleMono-${key}.ttf"
-            else
-              echo "Skipping: Missing font pair for $key"
-            fi
-          done
-
-      - name: ✍️ Modify Font Name
-        if: steps.compare-jetbrains-releases.outputs.is_updated == 'true' || steps.compare-maple-releases.outputs.is_updated == 'true'
-        run: |
-          python3 -c "
-          from fontTools.ttLib import TTFont
-          import os
-
-          font_dir = 'merged_fonts'
-          for font_file in os.listdir(font_dir):
-              if font_file.endswith('.ttf'):
-                  font_path = os.path.join(font_dir, font_file)
-                  font = TTFont(font_path)
-
-                  name_table = font['name']
-                  for record in name_table.names:
-                      if record.nameID == 1:  # Family Name
-                          record.string = 'JetBrainsMapleMono'.encode('utf-16-be')
-                      elif record.nameID == 4:  # Full Name
-                          record.string = font_file.replace('.ttf', '').encode('utf-16-be')
-
-                  font.save(font_path)
-          "
-
-      - name: 📤 Upload Merged Fonts
-        if: steps.compare-jetbrains-releases.outputs.is_updated == 'true' || steps.compare-maple-releases.outputs.is_updated == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: MergedFonts
-          path: merged_fonts/*.ttf
+          ./merge_fonts.sh  # 调用合并字体的脚本
 
       - name: 🚀 Publish to GitHub Releases
-        if: steps.compare-jetbrains-releases.outputs.is_updated == 'true' || steps.compare-maple-releases.outputs.is_updated == 'true'
         uses: softprops/action-gh-release@v1
         with:
           files: merged_fonts/*.ttf
@@ -157,4 +110,5 @@ jobs:
           name: "Latest Merged Fonts"
           draft: false
           prerelease: false
-          token: ${{ secrets.FUSION_JET_BRAINS_MAPLE_MONO_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.FUSION_JET_BRAINS_MAPLE_MONO_TOKEN }}
