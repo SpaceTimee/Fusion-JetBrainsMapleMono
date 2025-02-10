@@ -14,19 +14,25 @@ jobs:
       - name: 🔄 Checkout Repository
         uses: actions/checkout@v4
 
-      - name: 📦 Install FontTools
+      - name: 📦 Install Dependencies
         run: pip install fonttools
 
-      - name: 🔽 Clone JetBrains Mono
-        run: git clone --depth=1 https://github.com/JetBrains/JetBrainsMono.git typefaces/JetBrainsMono
+      - name: 🔽 Download Latest JetBrains Mono
+        run: |
+          JETBRAINS_LATEST=$(curl -s https://api.github.com/repos/JetBrains/JetBrainsMono/releases/latest | grep "browser_download_url" | cut -d '"' -f 4)
+          wget -O jetbrains-mono.zip "$JETBRAINS_LATEST"
+          unzip jetbrains-mono.zip -d fonts/jetbrains
 
-      - name: 🔽 Clone Maple Font
-        run: git clone --depth=1 https://github.com/subframe7536/maple-font.git typefaces/MapleMono
+      - name: 🔽 Download Latest Maple Font
+        run: |
+          MAPLE_LATEST=$(curl -s https://api.github.com/repos/subframe7536/maple-font/releases/latest | grep "browser_download_url" | grep "MapleMonoNormal-CN-unhinted.zip" | cut -d '"' -f 4)
+          wget -O maple-font.zip "$MAPLE_LATEST"
+          unzip maple-font.zip -d fonts/maple
 
       - name: 🎯 Merge JetBrains Mono & Maple Font
         run: |
-          JETBRAINS_FONT=$(find typefaces/JetBrainsMono -name "JetBrainsMono-Regular.ttf" | head -n 1)
-          MAPLE_FONT=$(find typefaces/MapleMono -name "MapleFont-Regular.ttf" | head -n 1)
+          JETBRAINS_FONT=$(find fonts/jetbrains/fonts/ttf -name "JetBrainsMono-Regular.ttf" | head -n 1)
+          MAPLE_FONT=$(find fonts/maple -name "MapleFontNormal-CN-Regular.ttf" | head -n 1)
           pyftmerge "$JETBRAINS_FONT" "$MAPLE_FONT"
           mv merged.ttf MergedFont.ttf
 
