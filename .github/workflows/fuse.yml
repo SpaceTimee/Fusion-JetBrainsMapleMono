@@ -21,13 +21,13 @@ jobs:
         run: |
           JETBRAINS_LATEST=$(curl -s https://api.github.com/repos/JetBrains/JetBrainsMono/releases/latest | grep "browser_download_url" | cut -d '"' -f 4)
           wget -O jetbrains-mono.zip "$JETBRAINS_LATEST"
-          unzip jetbrains-mono.zip -d fonts/jetbrains
+          mkdir -p fonts/jetbrains && unzip jetbrains-mono.zip -d fonts/jetbrains
 
       - name: 🔽 Download Latest Maple Font
         run: |
           MAPLE_LATEST=$(curl -s https://api.github.com/repos/subframe7536/maple-font/releases/latest | grep "browser_download_url" | grep "MapleMonoNormal-CN-unhinted.zip" | cut -d '"' -f 4)
           wget -O maple-font.zip "$MAPLE_LATEST"
-          unzip maple-font.zip -d fonts/maple
+          mkdir -p fonts/maple && unzip maple-font.zip -d fonts/maple
 
       - name: 🎯 Merge JetBrains Mono & Maple Font
         run: |
