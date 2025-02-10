@@ -1,0 +1,46 @@
+name: Fuse Typefaces
+
+on:
+  schedule:
+    - cron:  '0 * * * *'  # run per hour
+
+  workflow_dispatch:
+
+jobs:
+  merge_fonts:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔄 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 📦 Install FontTools
+        run: pip install fonttools
+
+      - name: 🔽 Clone JetBrains Mono
+        run: git clone --depth=1 https://github.com/JetBrains/JetBrainsMono.git typefaces/JetBrainsMono
+
+      - name: 🔽 Clone Maple Font
+        run: git clone --depth=1 https://github.com/subframe7536/maple-font.git typefaces/MapleMono
+
+      - name: 🎯 Merge JetBrains Mono & Maple Font
+        run: |
+          JETBRAINS_FONT=$(find typefaces/JetBrainsMono -name "JetBrainsMono-Regular.ttf" | head -n 1)
+          MAPLE_FONT=$(find typefaces/MapleMono -name "MapleFont-Regular.ttf" | head -n 1)
+          pyftmerge "$JETBRAINS_FONT" "$MAPLE_FONT"
+          mv merged.ttf MergedFont.ttf
+
+      - name: 📤 Upload Merged Font
+        uses: actions/upload-artifact@v4
+        with:
+          name: MergedFont
+          path: MergedFont.ttf
+
+      - name: 🚀 Publish to GitHub Releases
+        uses: softprops/action-gh-release@v1
+        with:
+          files: MergedFont.ttf
+          tag_name: latest
+          release_name: "Latest Merged Font"
+          draft: false
+          prerelease: false
