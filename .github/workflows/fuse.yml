@@ -34,26 +34,28 @@ jobs:
           MAPLE_FONT=$(find fonts/maple -name "MapleMonoNormal-CN-Regular.ttf" | head -n 1)
           echo "JetBrains Font Path: $JETBRAINS_FONT"
           echo "Maple Font Path: $MAPLE_FONT"
-          pyftmerge "$MAPLE_FONT" "$JETBRAINS_FONT"
+          pyftmerge "$JETBRAINS_FONT" "$MAPLE_FONT"
           mv merged.ttf MergedFont.ttf
 
       - name: ✍️ Modify Font Name
         run: |
-          from fontTools.ttLib import TTFont
+          python3 -c "
+from fontTools.ttLib import TTFont
 
-          # 打开合并后的字体
-          font = TTFont('MergedFont.ttf')
+# 打开合并后的字体
+font = TTFont('MergedFont.ttf')
 
-          # 修改字体名称（例如修改 'FullName' 和 'FamilyName'）
-          name_table = font['name']
-          for record in name_table.names:
-              if record.nameID == 1:  # Family Name
-                  record.string = 'NewFontFamily'.encode('utf-16-be')
-              elif record.nameID == 4:  # Full Name
-                  record.string = 'New Full Font Name'.encode('utf-16-be')
+# 修改字体名称（例如修改 'FullName' 和 'FamilyName'）
+name_table = font['name']
+for record in name_table.names:
+    if record.nameID == 1:  # Family Name
+        record.string = 'NewFontFamily'.encode('utf-16-be')
+    elif record.nameID == 4:  # Full Name
+        record.string = 'New Full Font Name'.encode('utf-16-be')
 
-          # 保存为新的字体文件
-          font.save('NewMergedFont.ttf')
+# 保存为新的字体文件
+font.save('NewMergedFont.ttf')
+          "
 
       - name: 📤 Upload Merged Font
         uses: actions/upload-artifact@v4
