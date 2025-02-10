@@ -22,6 +22,10 @@ jobs:
           JETBRAINS_COMMIT=$(git ls-remote https://github.com/JetBrains/JetBrainsMono.git refs/heads/master | awk '{print $1}')
           MAPLE_COMMIT=$(git ls-remote https://github.com/subframe7536/maple-font.git refs/heads/main | awk '{print $1}')
 
+          # 获取最新的 commit 消息
+          JETBRAINS_COMMIT_MSG=$(git log --format=%B -n 1 $JETBRAINS_COMMIT)
+          MAPLE_COMMIT_MSG=$(git log --format=%B -n 1 $MAPLE_COMMIT)
+
           echo "Latest JetBrains Mono Commit: $JETBRAINS_COMMIT"
           echo "Latest Maple Font Commit: $MAPLE_COMMIT"
 
@@ -32,6 +36,8 @@ jobs:
             echo "is_updated=true" >> $GITHUB_OUTPUT
             echo "$JETBRAINS_COMMIT" > jetbrains_commit.txt
             echo "$MAPLE_COMMIT" > maple_commit.txt
+            echo "$JETBRAINS_COMMIT_MSG" > jetbrains_commit_msg.txt  # 保存 commit 消息
+            echo "$MAPLE_COMMIT_MSG" > maple_commit_msg.txt  # 保存 commit 消息
           else
             echo "is_updated=false" >> $GITHUB_OUTPUT
           fi
@@ -108,10 +114,22 @@ jobs:
 
       - name: ✍️ Commit and Push Fused Fonts
         run: |
+          touch jetbrains_commit.txt maple_commit.txt jetbrains_commit_msg.txt maple_commit_msg.txt
+          
+          # 读取 JetBrains Mono 和 Maple Font 的 commit 消息
+          JETBRAINS_COMMIT_MSG=$(cat jetbrains_commit_msg.txt)
+          MAPLE_COMMIT_MSG=$(cat maple_commit_msg.txt)
+
+          # 合并消息，作为 commit 消息
+          COMMIT_MSG="Auto-fuse latest JetBrains Mono and Maple Font: JetBrains commit ($JETBRAINS_COMMIT_MSG), Maple commit ($MAPLE_COMMIT_MSG)"
+
+          # 配置 git
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
+
+          # 添加文件，提交并推送
           git add fused_fonts/*.ttf jetbrains_commit.txt maple_commit.txt
-          git commit -m "Auto-fuse latest JetBrains Mono and Maple Font (new commit detected)"
+          git commit -m "$COMMIT_MSG"
           git push
 
   fuse_and_release:
