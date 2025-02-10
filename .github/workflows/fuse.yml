@@ -48,10 +48,10 @@ jobs:
           # 修改字体名称（例如修改 'FullName' 和 'FamilyName'）
           name_table = font['name']
           for record in name_table.names:
-             if record.nameID == 1:
-                record.string = 'NewFontFamily'.encode('utf-16-be')
-              elif record.nameID == 4:
-                record.string = 'New Full Font Name'.encode('utf-16-be')
+            if record.nameID == 1:
+              record.string = 'NewFontFamily'.encode('utf-16-be')
+            elif record.nameID == 4:
+              record.string = 'New Full Font Name'.encode('utf-16-be')
 
           # 保存为新的字体文件
           font.save('NewMergedFont.ttf')
