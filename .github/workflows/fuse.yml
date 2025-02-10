@@ -96,10 +96,11 @@ jobs:
           python -m venv venv
           source venv/bin/activate || . venv/bin/activate
           pip install -r requirements.txt
-          python build.py --cn --no-liga
+          # python build.py --normal --no-hinted --no-nerd-font --ttf-only --cn --liga
+          python build.py --normal --no-hinted --no-nerd-font --ttf-only --liga
           cd ..
           mkdir -p fonts/maple
-          cp -r maple-font/build/MapleMono/MapleMono\ CN/ttf/* fonts/maple/
+          cp -r maple-font/fonts/ttf/* fonts/maple/
 
       - name: 🎯 Fuse JetBrains Mono & Maple Font
         run: |
