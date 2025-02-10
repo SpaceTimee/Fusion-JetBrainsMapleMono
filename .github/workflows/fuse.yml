@@ -95,6 +95,7 @@ jobs:
 
       - name: 🎯 Fuse JetBrains Mono & Maple Font
         run: |
+          pip install fonttools
           mkdir -p fused_fonts
           for style in Regular Bold Italic BoldItalic ExtraLight ExtraLightItalic Light LightItalic Medium MediumItalic SemiBold SemiBoldItalic Thin ThinItalic ExtraBold ExtraBoldItalic; do
             JETBRAINS_FONT="fonts/jetbrains/JetBrainsMono-${style}.ttf"
@@ -138,6 +139,7 @@ jobs:
 
       - name: 📦 Create ZIP Archive
         run: |
+          mkdir -p fused_fonts
           zip -r JetBrainsMapleMono.zip fused_fonts/
 
       - name: 🚀 Publish to GitHub Releases
