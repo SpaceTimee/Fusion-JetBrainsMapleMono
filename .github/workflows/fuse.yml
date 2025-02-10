@@ -72,16 +72,10 @@ jobs:
 
       - name: 📦 Install Dependencies
         run: |
-          # sudo apt-get update
-          # sudo apt-get install -y python python-venv python-dev fontforge
-          python -m venv venv
-          source venv/bin/activate || . venv/bin/activate
           pip install gftools fonttools
-          pip show gftools
 
       - name: 🔽 Clone and Build JetBrains Mono from Source
         run: |
-          source venv/bin/activate || . venv/bin/activate
           git clone --depth 1 https://github.com/JetBrains/JetBrainsMono.git
           cd JetBrainsMono
           gftools builder sources/config.yaml
@@ -93,11 +87,8 @@ jobs:
         run: |
           git clone --depth 1 https://github.com/subframe7536/maple-font.git
           cd maple-font
-          python -m venv venv
-          source venv/bin/activate || . venv/bin/activate
           pip install -r requirements.txt
-          # python build.py --normal --no-hinted --no-nerd-font --ttf-only --cn --liga
-          python build.py --normal --no-hinted --no-nerd-font --ttf-only --liga
+          python build.py --normal --no-hinted --no-nerd-font --ttf-only --cn --liga
           cd ..
           mkdir -p fonts/maple
           cp -r maple-font/fonts/TTF/* fonts/maple/
@@ -110,7 +101,6 @@ jobs:
             MAPLE_FONT="fonts/maple/MapleMonoNormal-${style}.ttf"
             if [[ -f "$JETBRAINS_FONT" && -f "$MAPLE_FONT" ]]; then
               echo "Fusing $JETBRAINS_FONT and $MAPLE_FONT..."
-              source venv/bin/activate || . venv/bin/activate
               pyftfuse "$MAPLE_FONT" "$JETBRAINS_FONT"
               mv fused.ttf "fused_fonts/JetBrainsMapleMono-${style}.ttf"
             fi
