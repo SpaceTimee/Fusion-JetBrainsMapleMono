@@ -107,7 +107,7 @@ jobs:
           mkdir -p fused_fonts
           for style in Regular Bold Italic BoldItalic ExtraLight ExtraLightItalic Light LightItalic Medium MediumItalic SemiBold SemiBoldItalic Thin ThinItalic ExtraBold ExtraBoldItalic; do
             JETBRAINS_FONT="fonts/jetbrains/JetBrainsMono-${style}.ttf"
-            MAPLE_FONT="fonts/maple/MapleMonoCN-${style}.ttf"
+            MAPLE_FONT="fonts/maple/MapleMonoNormal-${style}.ttf"
             if [[ -f "$JETBRAINS_FONT" && -f "$MAPLE_FONT" ]]; then
               echo "Fusing $JETBRAINS_FONT and $MAPLE_FONT..."
               pyftfuse "$MAPLE_FONT" "$JETBRAINS_FONT"

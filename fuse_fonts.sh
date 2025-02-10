@@ -14,7 +14,7 @@ wget -O maple-font.zip "$MAPLE_LATEST"
 unzip -o maple-font.zip -d fonts/maple
 
 echo "🎯 Fusing JetBrains Mono & Maple Font..."
-for style in Regular Bold Italic Medium Light Thin SemiBold ExtraLight ExtraBold; do
+for style in style in Regular Bold Italic BoldItalic ExtraLight ExtraLightItalic Light LightItalic Medium MediumItalic SemiBold SemiBoldItalic Thin ThinItalic ExtraBold ExtraBoldItalic; do
   JETBRAINS_FONT="fonts/jetbrains/fonts/ttf/JetBrainsMono-${style}.ttf"
   MAPLE_FONT="fonts/maple/MapleMonoNormal-CN-${style}.ttf"
 
