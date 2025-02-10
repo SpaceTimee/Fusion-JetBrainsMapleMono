@@ -20,7 +20,7 @@ for style in Regular Bold Italic Medium Light Thin SemiBold ExtraLight ExtraBold
 
   if [[ -f "$JETBRAINS_FONT" && -f "$MAPLE_FONT" ]]; then
     echo "Fusing $JETBRAINS_FONT with $MAPLE_FONT..."
-    pyftfuse "$MAPLE_FONT" "$JETBRAINS_FONT"
+    pyftmerge "$MAPLE_FONT" "$JETBRAINS_FONT"
     mv fused.ttf "fused_fonts/JetBrainsMapleMono-${style}.ttf"
   fi
 done
