@@ -34,7 +34,7 @@ jobs:
           MAPLE_FONT=$(find fonts/maple -name "MapleMonoNormal-CN-Regular.ttf" | head -n 1)
           echo "JetBrains Font Path: $JETBRAINS_FONT"
           echo "Maple Font Path: $MAPLE_FONT"
-          pyftmerge "$JETBRAINS_FONT" "$MAPLE_FONT"
+          pyftmerge "$MAPLE_FONT" "$JETBRAINS_FONT"
           mv merged.ttf MergedFont.ttf
 
       - name: ✍️ Modify Font Name
