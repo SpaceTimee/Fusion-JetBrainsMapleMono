@@ -81,6 +81,7 @@ jobs:
 
       - name: 🔽 Clone and Build JetBrains Mono from Source
         run: |
+          source venv/bin/activate || . venv/bin/activate
           git clone --depth 1 https://github.com/JetBrains/JetBrainsMono.git
           cd JetBrainsMono
           gftools builder sources/config.yaml
