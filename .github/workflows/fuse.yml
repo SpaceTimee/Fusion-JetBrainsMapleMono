@@ -143,6 +143,7 @@ jobs:
 
       - name: 🔽 Download and Fuse Fonts
         run: |
+          cd .github/workflows
           ./fuse_fonts.sh  # 调用合并字体的脚本
 
       - name: 📦 Create ZIP Archive
