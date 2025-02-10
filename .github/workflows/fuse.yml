@@ -65,12 +65,17 @@ jobs:
       - name: 🔄 Checkout Repository
         uses: actions/checkout@v4
 
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 'latest'
+
       - name: 📦 Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3.9 python3.9-venv python3.9-dev fontforge
-          python3.9 -m venv venv
-          source venv/bin/activate
+          sudo apt-get install -y python python-venv python-dev fontforge
+          python -m venv venv
+          source venv/bin/activate || . venv/bin/activate
           pip install gftools fonttools
 
       - name: 🔽 Clone and Build JetBrains Mono from Source
@@ -86,8 +91,8 @@ jobs:
         run: |
           git clone --depth 1 https://github.com/subframe7536/maple-font.git
           cd maple-font
-          python3.9 -m venv venv
-          source venv/bin/activate
+          python -m venv venv
+          source venv/bin/activate || . venv/bin/activate
           pip install -r requirements.txt
           python build.py --cn --no-liga
           cd ..
