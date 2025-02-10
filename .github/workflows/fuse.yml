@@ -49,6 +49,7 @@ jobs:
         with:
           files: MergedFont.ttf
           tag_name: latest
-          release_name: "Latest Merged Font"
+          name: "Latest Merged Font"
           draft: false
           prerelease: false
+          token: ${{ secrets.GITHUB_TOKEN }}
