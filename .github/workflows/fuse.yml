@@ -16,19 +16,19 @@ jobs:
       - name: 🔄 Checkout Repository
         uses: actions/checkout@v4
 
-      # - name: 获取上一次的 run_id
-      #   run: |
-      #     PREV_RUN_ID=$(gh run list --workflow "$GITHUB_WORKFLOW" --limit 2 --json databaseId --jq '.[1].databaseId')
-      #     echo "PREV_RUN_ID=$PREV_RUN_ID" >> $GITHUB_ENV
-      #   env:
-      #     GH_TOKEN: ${{ secrets.FUSION_JET_BRAINS_MAPLE_MONO_TOKEN }}
+      - name: 获取上一次的 run_id
+        run: |
+          PREV_RUN_ID=$(gh run list --workflow "$GITHUB_WORKFLOW" --limit 2 --json databaseId --jq '.[1].databaseId')
+          echo "PREV_RUN_ID=$PREV_RUN_ID" >> $GITHUB_ENV
+        env:
+          GH_TOKEN: ${{ secrets.FUSION_JET_BRAINS_MAPLE_MONO_TOKEN }}
 
-      # - name: 🔍 Download Artifact
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: release
-      #     id: $PREV_RUN_ID
-      #     github-token: ${{ secrets.FUSION_JET_BRAINS_MAPLE_MONO_TOKEN }}
+      - name: 🔍 Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: release
+          id: $PREV_RUN_ID
+          github-token: ${{ secrets.FUSION_JET_BRAINS_MAPLE_MONO_TOKEN }}
 
       - name: Display structure of downloaded files
         run: ls -R
