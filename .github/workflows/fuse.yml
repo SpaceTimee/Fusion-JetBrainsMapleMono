@@ -20,6 +20,7 @@ jobs:
         run: |
           PREV_RUN_ID=$(gh run list --workflow "$GITHUB_WORKFLOW" --limit 2 --json databaseId --jq '.[1].databaseId')
           echo "PREV_RUN_ID=$PREV_RUN_ID" >> $GITHUB_ENV
+          echo "$PREV_RUN_ID"
         env:
           GH_TOKEN: ${{ secrets.FUSION_JET_BRAINS_MAPLE_MONO_TOKEN }}
 
@@ -27,7 +28,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: release
-          run-id: ${{ PREV_RUN_ID }}
+          run-id: $PREV_RUN_ID
           github-token: ${{ secrets.FUSION_JET_BRAINS_MAPLE_MONO_TOKEN }}
 
       - name: Display structure of downloaded files
