@@ -55,7 +55,6 @@ jobs:
           fi
 
       - name: Upload Artifact
-        if: steps.check_release.outputs.is_updated == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: release
