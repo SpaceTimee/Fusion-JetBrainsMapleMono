@@ -18,7 +18,7 @@ jobs:
 
       - name: 获取上一次的 run_id
         run: |
-          PREV_RUN_ID=$(gh run list --workflow $GITHUB_WORKFLOW --limit 2 --json databaseId --jq '.[1].databaseId')
+          PREV_RUN_ID=$(gh run list --workflow "$GITHUB_WORKFLOW" --limit 2 --json databaseId --jq '.[1].databaseId')
           echo "PREV_RUN_ID=$PREV_RUN_ID" >> $GITHUB_ENV
         env:
           GH_TOKEN: ${{ secrets.FUSION_JET_BRAINS_MAPLE_MONO_TOKEN }}
