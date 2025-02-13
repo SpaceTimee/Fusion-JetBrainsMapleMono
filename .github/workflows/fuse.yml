@@ -3,53 +3,35 @@ name: Fuse Typefaces
 on:
   schedule:
     - cron: "0 * * * *" # 每小时运行一次
+
   workflow_dispatch:
 
 jobs:
   check_updates:
     runs-on: ubuntu-latest
     outputs:
-      is_commit_updated: ${{ steps.check_commit.outputs.is_updated }}
-      is_release_updated: ${{ steps.check_release.outputs.is_updated }}
+      is_updated: ${{ steps.check_release.outputs.is_updated }}
 
     steps:
       - name: 🔄 Checkout Repository
         uses: actions/checkout@v4
 
-      - name: 🔍 Check Latest Commit Updates
-        id: check_commit
-        run: |
-          # 获取最新的 commit SHA
-          JETBRAINS_COMMIT=$(git ls-remote https://github.com/JetBrains/JetBrainsMono.git refs/heads/master | awk '{print $1}')
-          MAPLE_COMMIT=$(git ls-remote https://github.com/subframe7536/maple-font.git refs/heads/main | awk '{print $1}')
+      - name: 获取上一次的 run_id
+      run: |
+        PREV_RUN_ID=$(gh run list --workflow $GITHUB_WORKFLOW --limit 2 --json databaseId --jq '.[1].databaseId')
+        echo "PREV_RUN_ID=$PREV_RUN_ID" >> $GITHUB_ENV
+      env:
+        GH_TOKEN: ${{ secrets.FUSION_JET_BRAINS_MAPLE_MONO_TOKEN }}
 
-          echo "Latest JetBrains Mono Commit: $JETBRAINS_COMMIT"
-          echo "Latest Maple Font Commit: $MAPLE_COMMIT"
-
-          PREV_JETBRAINS_COMMIT=$(cat jetbrains_commit.txt 2>/dev/null || echo "")
-          PREV_MAPLE_COMMIT=$(cat maple_commit.txt 2>/dev/null || echo "")
-
-          if [[ "$JETBRAINS_COMMIT" != "$PREV_JETBRAINS_COMMIT" || "$MAPLE_COMMIT" != "$PREV_MAPLE_COMMIT" ]]; then
-            echo "is_updated=true" >> $GITHUB_OUTPUT
-            echo "$JETBRAINS_COMMIT" > jetbrains_commit.txt
-            echo "$MAPLE_COMMIT" > maple_commit.txt
-
-            # 克隆 JetBrains Mono 仓库（仅获取最新 commit）
-            git clone --depth 1 https://github.com/JetBrains/JetBrainsMono.git jetbrains_mono_repo
-            cd jetbrains_mono_repo
-            JETBRAINS_COMMIT_MSG=$(git log -1 --pretty=%B)
-            cd ..
-            echo "$JETBRAINS_COMMIT_MSG" > jetbrains_commit_msg.txt
-
-            # 克隆 Maple Font 仓库（仅获取最新 commit）
-            git clone --depth 1 https://github.com/subframe7536/maple-font.git maple_font_repo
-            cd maple_font_repo
-            MAPLE_COMMIT_MSG=$(git log -1 --pretty=%B)
-            cd ..
-            echo "$MAPLE_COMMIT_MSG" > maple_commit_msg.txt
-          else
-            echo "is_updated=false" >> $GITHUB_OUTPUT
-          fi
+      - name: 🔍 Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: release
+          id: $PREV_RUN_ID
+          github-token: ${{ secrets.FUSION_JET_BRAINS_MAPLE_MONO_TOKEN }}
+      
+      - name: Display structure of downloaded files
+        run: ls -R
 
       - name: 🔍 Check Latest Release Updates
         id: check_release
@@ -71,10 +53,17 @@ jobs:
             echo "is_updated=false" >> $GITHUB_OUTPUT
           fi
 
+      - name: Upload Artifact
+        if: steps.check_release.outputs.is_updated == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: release
+          path: "*release.txt"
+
   fuse_and_commit:
-    needs: check_updates
-    if: needs.check_updates.outputs.is_commit_updated == 'true'
     runs-on: ubuntu-latest
+    needs: check_updates
+    if: needs.check_updates.outputs.is_updated == 'true'
 
     steps:
       - name: 🔄 Checkout Repository
@@ -121,53 +110,10 @@ jobs:
             fi
           done
 
-      - name: ✍️ Commit and Push Fused Fonts
-        run: |
-          touch jetbrains_commit.txt maple_commit.txt jetbrains_commit_msg.txt maple_commit_msg.txt
-          
-          # 读取 JetBrains Mono 和 Maple Font 的 commit 消息
-          JETBRAINS_COMMIT_MSG=$(cat jetbrains_commit_msg.txt)
-          MAPLE_COMMIT_MSG=$(cat maple_commit_msg.txt)
-
-          # 合并消息，作为 commit 消息
-          COMMIT_MSG="Auto-fuse latest JetBrains Mono and Maple Font: JetBrains commit ($JETBRAINS_COMMIT_MSG), Maple commit ($MAPLE_COMMIT_MSG)"
-
-          # 配置 git
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
-
-          # 添加文件，提交并推送
-          git add fused_fonts/*.ttf jetbrains_commit.txt maple_commit.txt
-          git commit -m "$COMMIT_MSG"
-          git push
-
-  fuse_and_release:
-    needs: check_updates
-    if: needs.check_updates.outputs.is_release_updated == 'true'
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: 🔄 Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: 📦 Install Dependencies
-        run: pip install fonttools
-
-      - name: 🛠️ Ensure fuse_fonts.sh is executable
-        run: |
-          cd .github/workflows
-          chmod +x ./fuse_fonts.sh
-
-      - name: 🔽 Download and Fuse Fonts
-        run: |
-          cd .github/workflows
-          ./fuse_fonts.sh  # 调用合并字体的脚本
-
       - name: 📦 Create ZIP Archive
-        run: |
-          mkdir -p fused_fonts
-          zip -r JetBrainsMapleMono.zip fused_fonts/
-
+      run: |
+        zip -r JetBrainsMapleMono.zip fused_fonts/
+  
       - name: 🚀 Publish to GitHub Releases
         uses: softprops/action-gh-release@v1
         with:
