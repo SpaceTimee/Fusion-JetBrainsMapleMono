@@ -2,12 +2,17 @@ name: Fuse Typefaces
 
 on:
   schedule:
-    - cron: "0 * * * *" # 每小时运行一次
+    - cron: */5 * * * *
+
+  push:
+    branches:
+      - **
 
   workflow_dispatch:
 
 jobs:
   check_updates:
+    name: Check Updates
     runs-on: ubuntu-latest
     outputs:
       is_updated: ${{ steps.check_release.outputs.is_updated }}
@@ -15,9 +20,6 @@ jobs:
       maple_release: ${{ steps.check_release.outputs.maple_release }}
 
     steps:
-      - name: 🔄 Checkout Repository
-        uses: actions/checkout@v4
-
       - name: 获取上一次的 run_id
         run: |
           PREV_RUN_ID=$(gh run list --workflow "$GITHUB_WORKFLOW" --limit 2 --json databaseId --jq '.[1].databaseId')
@@ -68,15 +70,13 @@ jobs:
           name: release-info
           path: "*release.txt"
 
-  fuse_and_commit:
+  fuse_and_release_typefaces:
+    name: Fuse & Release Typefaces
     runs-on: ubuntu-latest
     needs: check_updates
-    # if: needs.check_updates.outputs.is_updated == 'false'
+    if: needs.check_updates.outputs.is_updated == "true"
 
     steps:
-      - name: 🔄 Checkout Repository
-        uses: actions/checkout@v4
-
       - name: 🐍 Set up Python
         uses: actions/setup-python@v4
         with:
