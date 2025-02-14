@@ -20,6 +20,9 @@ jobs:
       maple_release: ${{ steps.check_release.outputs.maple_release }}
 
     steps:
+      - name: 🔄 Checkout Repository
+        uses: actions/checkout@v4
+        
       - name: 获取上一次的 run_id
         run: |
           PREV_RUN_ID=$(gh run list --workflow "$GITHUB_WORKFLOW" --limit 2 --json databaseId --jq '.[1].databaseId')
