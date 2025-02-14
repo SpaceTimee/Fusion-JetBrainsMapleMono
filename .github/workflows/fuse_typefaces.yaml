@@ -78,8 +78,9 @@ jobs:
         uses: actions/setup-python@v5
         with:
           check-latest: true
-        run: |
-          pip install gftools fonttools
+
+      - name: Install Dependencies
+        run: pip install gftools fonttools
 
       - name: Clone and Build JetBrains Mono
         run: |
