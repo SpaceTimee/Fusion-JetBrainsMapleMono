@@ -59,7 +59,7 @@ jobs:
             echo "$JETBRAINS_RELEASE" > jetbrains_release.txt #
             echo "$MAPLE_RELEASE" > maple_release.txt #
             echo "jetbrains_release=$JETBRAINS_RELEASE" > $GITHUB_OUTPUT  #
-            echo $JETBRAINS_RELEASE  ##
+            echo ${{ steps.check_release.outputs.jetbrains_release }}
             echo "maple_release=$MAPLE_RELEASE" > $GITHUB_OUTPUT  #
           fi
 
@@ -126,7 +126,7 @@ jobs:
       - name: 🔢 Generate Tag Name
         id: generate_tag
         run: |
-          JETBRAINS_VERSION=${{ needs.check_updates.outputs.jetbrains_release }}
+          JETBRAINS_VERSION="${{ needs.check_updates.outputs.jetbrains_release }}"
           MAPLE_VERSION="${{ needs.check_updates.outputs.maple_release }}"
 
           # 去掉 v 前缀
