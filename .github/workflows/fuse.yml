@@ -71,7 +71,7 @@ jobs:
   fuse_and_commit:
     runs-on: ubuntu-latest
     needs: check_updates
-    if: needs.check_updates.outputs.is_updated == 'false' # true
+    # if: needs.check_updates.outputs.is_updated == 'false'
 
     steps:
       - name: 🔄 Checkout Repository
