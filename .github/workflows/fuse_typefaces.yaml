@@ -15,9 +15,9 @@ jobs:
     name: Check Release Updates
     runs-on: ubuntu-latest
     outputs:
-      is_updated: ${{ steps.check_release_updates.outputs.is_updated }}
-      latest_jetbrains_release_tag: ${{ steps.check_release_updates.outputs.latest_jetbrains_release_tag }}
-      latest_maple_release_tag: ${{ steps.check_release_updates.outputs.latest_maple_release_tag }}
+      IS_UPDATED: ${{ steps.check_release_updates.outputs.IS_UPDATED }}
+      LATEST_JETBRAINS_RELEASE_TAG: ${{ steps.check_release_updates.outputs.LATEST_JETBRAINS_RELEASE_TAG }}
+      LATEST_MAPLE_RELEASE_TAG: ${{ steps.check_release_updates.outputs.LATEST_MAPLE_RELEASE_TAG }}
 
     steps:
       - name: Fetch Git Folder
@@ -52,16 +52,16 @@ jobs:
           if [[ "$PREV_JETBRAINS_RELEASE_TAG" != "$LATEST_JETBRAINS_RELEASE_TAG" || "$PREV_MAPLE_RELEASE_TAG" != "$LATEST_MAPLE_RELEASE_TAG" ]]; then
             echo "$LATEST_JETBRAINS_RELEASE_TAG" > jetbrains_release_tag.txt
             echo "$LATEST_MAPLE_RELEASE_TAG" > maple_release_tag.txt
-            echo "is_updated=true" >> $GITHUB_OUTPUT
-            echo "latest_jetbrains_release_tag=$LATEST_JETBRAINS_RELEASE_TAG" >> $GITHUB_OUTPUT
-            echo "latest_maple_release_tag=$LATEST_MAPLE_RELEASE_TAG" >> $GITHUB_OUTPUT
+            echo "IS_UPDATED=true" >> $GITHUB_OUTPUT
+            echo "LATEST_JETBRAINS_RELEASE_TAG=$LATEST_JETBRAINS_RELEASE_TAG" >> $GITHUB_OUTPUT
+            echo "LATEST_MAPLE_RELEASE_TAG=$LATEST_MAPLE_RELEASE_TAG" >> $GITHUB_OUTPUT
           else
-            echo "is_updated=false" >> $GITHUB_OUTPUT
+            echo "IS_UPDATED=false" >> $GITHUB_OUTPUT
           fi
 
-          echo "Preview JetBrains Release Tag: $PREV_JETBRAINS_RELEASE_TAG"
+          echo "Preview Jetbrains Release Tag: $PREV_JETBRAINS_RELEASE_TAG"
           echo "Preview Maple Release Tag: $PREV_MAPLE_RELEASE_TAG"
-          echo "Latest JetBrains Release Tag: $LATEST_JETBRAINS_RELEASE_TAG"
+          echo "Latest Jetbrains Release Tag: $LATEST_JETBRAINS_RELEASE_TAG"
           echo "Latest Maple Release Tag: $LATEST_MAPLE_RELEASE_TAG"
 
       - name: Upload Release Tags
@@ -74,7 +74,7 @@ jobs:
     name: Fuse And Release Fonts
     runs-on: ubuntu-latest
     needs: check_release_updates
-    # if: needs.check_release_updates.outputs.is_updated == 'true'
+    # if: needs.check_release_updates.outputs.IS_UPDATED == 'true'
 
     steps:
       - name: Setup Python
@@ -85,16 +85,16 @@ jobs:
       - name: Install Pip Dependencies
         run: pip install gftools fonttools
 
-      - name: Build JetBrains
+      - name: Build Jetbrains
         run: |
           git clone -b "$LATEST_JETBRAINS_RELEASE_TAG" --single-branch https://github.com/JetBrains/JetBrainsMono.git
           cd JetBrainsMono
           gftools builder sources/config.yaml
           cd ..
           mkdir -p source-fonts/jetbrains
-          cp -r JetBrainsMono/fonts/ttf/* source-fonts/jetbrains/
+          mv -r JetBrainsMono/fonts/ttf/* source-fonts/jetbrains/
         env:
-          LATEST_JETBRAINS_RELEASE_TAG: ${{ needs.check_release_updates.outputs.latest_jetbrains_release_tag }}
+          LATEST_JETBRAINS_RELEASE_TAG: ${{ needs.check_release_updates.outputs.LATEST_JETBRAINS_RELEASE_TAG }}
 
       - name: Build Maple
         run: |
@@ -104,49 +104,36 @@ jobs:
           python build.py --normal --no-hinted --liga --no-nerd-font --cn --ttf-only
           cd ..
           mkdir -p source-fonts/maple
-          cp -r maple-font/fonts/TTF/* source-fonts/maple/
+          mv -r maple-font/fonts/TTF/* source-fonts/maple/
         env:
-          LATEST_MAPLE_RELEASE_TAG: ${{ needs.check_release_updates.outputs.latest_maple_release_tag }}
+          LATEST_MAPLE_RELEASE_TAG: ${{ needs.check_release_updates.outputs.LATEST_MAPLE_RELEASE_TAG }}
 
       - name: Fuse Fonts
         run: |
           mkdir -p fused_fonts
           for style in Regular Bold Italic BoldItalic ExtraLight ExtraLightItalic Light LightItalic Medium MediumItalic SemiBold SemiBoldItalic Thin ThinItalic ExtraBold ExtraBoldItalic; do
-            JETBRAINS_FONT="fonts/jetbrains/JetBrainsMono-${style}.ttf"
-            MAPLE_FONT="fonts/maple/MapleMonoNormal-${style}.ttf"
-            if [[ -f "$JETBRAINS_FONT" && -f "$MAPLE_FONT" ]]; then
-              echo "Fusing $JETBRAINS_FONT and $MAPLE_FONT..."
-              pyftmerge "$MAPLE_FONT" "$JETBRAINS_FONT"
-              mv merged.ttf "fused_fonts/JetBrainsMapleMono-${style}.ttf"
-            fi
+            fonttools merge "source-fonts/maple/MapleMonoNormal-${style}.ttf" "source-fonts/jetbrains/JetBrainsMono-${style}.ttf"
+            mv merged.ttf "fused_fonts/JetbrainsMapleMono-${style}.ttf"
           done
 
       - name: Zip Fonts
-        run: zip -r JetBrainsMapleMono.zip fused_fonts/
+        run: zip -r JetbrainsMapleMono.zip fused_fonts/
 
       - name: Generate Release Tag
         id: generate_tag
         run: |
-          JETBRAINS_VERSION="${{ needs.check_release_updates.outputs.latest_jetbrains_release_tag }}"
-          MAPLE_VERSION="${{ needs.check_release_updates.outputs.latest_maple_release_tag }}"
+          TAG_NAME="1.$(echo "$LATEST_JETBRAINS_RELEASE_TAG" | sed 's/^v//' | tr -d '.').$(echo "$LATEST_MAPLE_RELEASE_TAG" | sed 's/^v//' | tr -d '.')"
 
-          # 去掉 v 前缀
-          JETBRAINS_VERSION_CLEANED=$(echo "$JETBRAINS_VERSION" | sed 's/^v//')
-          MAPLE_VERSION_CLEANED=$(echo "$MAPLE_VERSION" | sed 's/^v//')
-
-          # 去掉 . 号
-          JETBRAINS_VERSION_CLEANED=$(echo "$JETBRAINS_VERSION_CLEANED" | tr -d '.')
-          MAPLE_VERSION_CLEANED=$(echo "$MAPLE_VERSION_CLEANED" | tr -d '.')
-
-          # 组合成最终的 tag_name
-          TAG_NAME="1.${JETBRAINS_VERSION_CLEANED}.${MAPLE_VERSION_CLEANED}"
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
           echo "Generated tag: $TAG_NAME"
+        env:
+          LATEST_JETBRAINS_RELEASE_TAG: ${{ needs.check_release_updates.outputs.LATEST_JETBRAINS_RELEASE_TAG }}
+          LATEST_MAPLE_RELEASE_TAG: ${{ needs.check_release_updates.outputs.LATEST_MAPLE_RELEASE_TAG }}
 
       - name: Release Fonts
         uses: softprops/action-gh-release@v1
         with:
-          files: JetBrainsMapleMono.zip
+          files: JetbrainsMapleMono.zip
           tag_name: ${{ env.TAG_NAME }}
           name: ${{ env.TAG_NAME }}
           draft: false
