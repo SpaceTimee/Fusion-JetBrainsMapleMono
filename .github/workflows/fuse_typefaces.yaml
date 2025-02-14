@@ -16,59 +16,56 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       is_updated: ${{ steps.check_release.outputs.is_updated }}
-      jetbrains_release: ${{ steps.check_release.outputs.jetbrains_release }}
-      maple_release: ${{ steps.check_release.outputs.maple_release }}
+      jetbrains_release_tag: ${{ steps.check_release.outputs.jetbrains_release_tag }}
+      maple_release_tag: ${{ steps.check_release.outputs.maple_release_tag }}
 
     steps:
-      - name: 🔄 Checkout Repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
-        
+
       - name: 获取上一次的 run_id
         run: |
           PREV_RUN_ID=$(gh run list --workflow "$GITHUB_WORKFLOW" --limit 2 --json databaseId --jq '.[1].databaseId')
           echo "PREV_RUN_ID=$PREV_RUN_ID" >> $GITHUB_ENV
           echo "$PREV_RUN_ID"
         env:
-          GH_TOKEN: ${{ secrets.FUSION_JET_BRAINS_MAPLE_MONO_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
-      - name: 🔍 Download Artifact
+      - name: 🔍 Download Release Tags
+        continue-on-error: true
         uses: actions/download-artifact@v4
         with:
-          name: release
+          name: release_tags
           run-id: ${{ env.PREV_RUN_ID }}
-          github-token: ${{ secrets.FUSION_JET_BRAINS_MAPLE_MONO_TOKEN }}
+          github-token: ${{ secrets.GH_TOKEN }}
 
-      - name: 🔍 Check Latest Release Updates
+      - name: Check Latest Release Updates
         id: check_release
         run: |
-          JETBRAINS_RELEASE=$(curl -s https://api.github.com/repos/JetBrains/JetBrainsMono/releases/latest | jq -r '.tag_name')
-          MAPLE_RELEASE=$(curl -s https://api.github.com/repos/subframe7536/maple-font/releases/latest | jq -r '.tag_name')
+          JETBRAINS_RELEASE_TAG=$(curl -s https://api.github.com/repos/JetBrains/JetBrainsMono/releases/latest | jq -r '.tag_name')
+          MAPLE_RELEASE_TAG=$(curl -s https://api.github.com/repos/subframe7536/maple-font/releases/latest | jq -r '.tag_name')
 
-          echo "Latest JetBrains Mono Release: $JETBRAINS_RELEASE"
-          echo "Latest Maple Font Release: $MAPLE_RELEASE"
+          echo "Latest JetBrains Mono Release: $JETBRAINS_RELEASE_TAG"
+          echo "Latest Maple Font Release: $MAPLE_RELEASE_TAG"
 
-          PREV_JETBRAINS_RELEASE=$(cat jetbrains_release.txt 2>/dev/null || echo "")
-          PREV_MAPLE_RELEASE=$(cat maple_release.txt 2>/dev/null || echo "")
+          PREV_JETBRAINS_RELEASE_TAG=$(cat jetbrains_release_tag.txt 2>/dev/null || echo "")
+          PREV_MAPLE_RELEASE_TAG=$(cat maple_release_tag.txt 2>/dev/null || echo "")
 
-          if [[ "$JETBRAINS_RELEASE" != "$PREV_JETBRAINS_RELEASE" || "$MAPLE_RELEASE" != "$PREV_MAPLE_RELEASE" ]]; then
+          if [[ "$JETBRAINS_RELEASE_TAG" != "$PREV_JETBRAINS_RELEASE_TAG" || "$MAPLE_RELEASE_TAG" != "$PREV_MAPLE_RELEASE_TAG" ]]; then
             echo "is_updated=true" >> $GITHUB_OUTPUT
-            echo "$JETBRAINS_RELEASE" > jetbrains_release.txt
-            echo "$MAPLE_RELEASE" > maple_release.txt
-            echo "jetbrains_release=$JETBRAINS_RELEASE" >> $GITHUB_OUTPUT
-            echo "maple_release=$MAPLE_RELEASE" >> $GITHUB_OUTPUT
+            echo "$JETBRAINS_RELEASE_TAG" > jetbrains_release_tag.txt
+            echo "$MAPLE_RELEASE_TAG" > maple_release_tag.txt
+            echo "jetbrains_release_tag=$JETBRAINS_RELEASE_TAG" >> $GITHUB_OUTPUT
+            echo "maple_release_tag=$MAPLE_RELEASE_TAG" >> $GITHUB_OUTPUT
           else
             echo "is_updated=false" >> $GITHUB_OUTPUT
-            echo "$JETBRAINS_RELEASE" > jetbrains_release.txt #
-            echo "$MAPLE_RELEASE" > maple_release.txt #
-            echo "jetbrains_release=$JETBRAINS_RELEASE" >> $GITHUB_OUTPUT  #
-            echo "maple_release=$MAPLE_RELEASE" >> $GITHUB_OUTPUT  #
           fi
 
-      - name: Upload Artifact
+      - name: Upload Release Tags
         uses: actions/upload-artifact@v4
         with:
-          name: release-info
-          path: "*release.txt"
+          name: release_tags
+          path: "*release_tag.txt"
 
   fuse_and_release_typefaces:
     name: Fuse & Release Typefaces
@@ -125,8 +122,8 @@ jobs:
       - name: 🔢 Generate Tag Name
         id: generate_tag
         run: |
-          JETBRAINS_VERSION="${{ needs.check_updates.outputs.jetbrains_release }}"
-          MAPLE_VERSION="${{ needs.check_updates.outputs.maple_release }}"
+          JETBRAINS_VERSION="${{ needs.check_updates.outputs.jetbrains_release_tag }}"
+          MAPLE_VERSION="${{ needs.check_updates.outputs.maple_release_tag }}"
 
           # 去掉 v 前缀
           JETBRAINS_VERSION_CLEANED=$(echo "$JETBRAINS_VERSION" | sed 's/^v//')
@@ -150,4 +147,4 @@ jobs:
           draft: false
           prerelease: false
         env:
-          GITHUB_TOKEN: ${{ secrets.FUSION_JET_BRAINS_MAPLE_MONO_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
