@@ -44,8 +44,8 @@ jobs:
       - name: Check Release Updates
         id: check_release_updates
         run: |
-          PREV_JETBRAINS_RELEASE_TAG=$(<jetbrains_release_tag.txt 2>/dev/null || echo "")
-          PREV_MAPLE_RELEASE_TAG=$(<maple_release_tag.txt 2>/dev/null || echo "")
+          PREV_JETBRAINS_RELEASE_TAG=$(cat jetbrains_release_tag.txt 2>/dev/null || echo "")
+          PREV_MAPLE_RELEASE_TAG=$(cat maple_release_tag.txt 2>/dev/null || echo "")
           LATEST_JETBRAINS_RELEASE_TAG=$(curl -s https://api.github.com/repos/JetBrains/JetBrainsMono/releases/latest | jq -r '.tag_name')
           LATEST_MAPLE_RELEASE_TAG=$(curl -s https://api.github.com/repos/subframe7536/maple-font/releases/latest | jq -r '.tag_name')
 
