@@ -59,6 +59,7 @@ jobs:
             echo "$JETBRAINS_RELEASE" > jetbrains_release.txt #
             echo "$MAPLE_RELEASE" > maple_release.txt #
             echo "jetbrains_release=$JETBRAINS_RELEASE" > $GITHUB_OUTPUT  #
+            echo $JETBRAINS_RELEASE  ##
             echo "maple_release=$MAPLE_RELEASE" > $GITHUB_OUTPUT  #
           fi
 
