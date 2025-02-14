@@ -87,22 +87,26 @@ jobs:
 
       - name: Build JetBrains
         run: |
-          git clone -b "${{ needs.check_release_updates.outputs.latest_jetbrains_release_tag }}" --single-branch https://github.com/JetBrains/JetBrainsMono.git
+          git clone -b "$LATEST_JETBRAINS_RELEASE_TAG" --single-branch https://github.com/JetBrains/JetBrainsMono.git
           cd JetBrainsMono
           gftools builder sources/config.yaml
           cd ..
           mkdir -p source-fonts/jetbrains
           cp -r JetBrainsMono/fonts/ttf/* source-fonts/jetbrains/
+        env:
+          LATEST_JETBRAINS_RELEASE_TAG: ${{ needs.check_release_updates.outputs.latest_jetbrains_release_tag }}
 
       - name: Build Maple
         run: |
-          git clone -b "${{ needs.check_release_updates.outputs.latest_maple_release_tag }}" --single-branch https://github.com/subframe7536/maple-font.git
+          git clone -b "$LATEST_MAPLE_RELEASE_TAG" --single-branch https://github.com/subframe7536/maple-font.git
           cd maple-font
           pip install -r requirements.txt
           python build.py --normal --no-hinted --liga --no-nerd-font --cn --ttf-only
           cd ..
           mkdir -p source-fonts/maple
           cp -r maple-font/fonts/TTF/* source-fonts/maple/
+        env:
+          LATEST_MAPLE_RELEASE_TAG: ${{ needs.check_release_updates.outputs.latest_maple_release_tag }}
 
       - name: Fuse Fonts
         run: |
