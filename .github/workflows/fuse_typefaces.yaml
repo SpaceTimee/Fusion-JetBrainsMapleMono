@@ -20,8 +20,10 @@ jobs:
       maple_release_tag: ${{ steps.check_release.outputs.maple_release_tag }}
 
     steps:
-      # - name: Checkout Repository
-      #   uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: .git
 
       - name: 获取上一次的 run_id
         run: |
