@@ -129,12 +129,18 @@ jobs:
           LATEST_MAPLE_RELEASE_TAG: ${{ needs.check_release_updates.outputs.LATEST_MAPLE_RELEASE_TAG }}
 
       - name: Release Fonts
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: JetbrainsMapleMono.zip
+          body: >
+            Fused with [JetBrains Mono ${{ needs.check_release_updates.outputs.LATEST_JETBRAINS_RELEASE_TAG }}]
+            (https://github.com/JetBrains/JetBrainsMono/releases/tag/${{ needs.check_release_updates.outputs.LATEST_JETBRAINS_RELEASE_TAG }}) &
+            [Maple Mono ${{ needs.check_release_updates.outputs.LATEST_MAPLE_RELEASE_TAG }}]
+            (https://github.com/subframe7536/maple-font/releases/tag/${{ needs.check_release_updates.outputs.LATEST_MAPLE_RELEASE_TAG }})
           tag_name: ${{ env.RELEASE_TAG }}
           name: ${{ env.RELEASE_TAG }}
           draft: false
           prerelease: false
+          make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
