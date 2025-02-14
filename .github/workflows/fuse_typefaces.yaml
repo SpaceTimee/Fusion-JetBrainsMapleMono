@@ -27,7 +27,7 @@ jobs:
 
       - name: Get Preview Run Id
         run: |
-          PREV_RUN_ID=$(gh run list --workflow "$GITHUB_WORKFLOW" --limit 2 --jq '.[1].databaseId')
+          PREV_RUN_ID=$(gh run list --workflow "$GITHUB_WORKFLOW" --limit 2 --json databaseId --jq '.[1].databaseId')
           echo "PREV_RUN_ID=$PREV_RUN_ID" >> $GITHUB_ENV
           echo "Preview Run Id: $PREV_RUN_ID"
         env:
