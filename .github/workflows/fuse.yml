@@ -82,45 +82,45 @@ jobs:
         with:
           python-version: "3.13.2"
 
-      - name: 📦 Install Dependencies
-        run: |
-          pip install gftools fonttools
+      # - name: 📦 Install Dependencies
+      #   run: |
+      #     pip install gftools fonttools
 
-      - name: 🔽 Clone and Build JetBrains Mono from Source
-        run: |
-          git clone --depth 1 https://github.com/JetBrains/JetBrainsMono.git
-          cd JetBrainsMono
-          gftools builder sources/config.yaml
-          cd ..
-          mkdir -p fonts/jetbrains
-          cp -r JetBrainsMono/fonts/ttf/* fonts/jetbrains/
+      # - name: 🔽 Clone and Build JetBrains Mono from Source
+      #   run: |
+      #     git clone --depth 1 https://github.com/JetBrains/JetBrainsMono.git
+      #     cd JetBrainsMono
+      #     gftools builder sources/config.yaml
+      #     cd ..
+      #     mkdir -p fonts/jetbrains
+      #     cp -r JetBrainsMono/fonts/ttf/* fonts/jetbrains/
 
-      - name: 🔽 Clone and Build Maple Font from Source
-        run: |
-          git clone --depth 1 https://github.com/subframe7536/maple-font.git
-          cd maple-font
-          pip install -r requirements.txt
-          python build.py --normal --no-hinted --no-nerd-font --ttf-only --cn --liga
-          cd ..
-          mkdir -p fonts/maple
-          cp -r maple-font/fonts/TTF/* fonts/maple/
+      # - name: 🔽 Clone and Build Maple Font from Source
+      #   run: |
+      #     git clone --depth 1 https://github.com/subframe7536/maple-font.git
+      #     cd maple-font
+      #     pip install -r requirements.txt
+      #     python build.py --normal --no-hinted --no-nerd-font --ttf-only --cn --liga
+      #     cd ..
+      #     mkdir -p fonts/maple
+      #     cp -r maple-font/fonts/TTF/* fonts/maple/
 
-      - name: 🎯 Fuse JetBrains Mono & Maple Font
-        run: |
-          mkdir -p fused_fonts
-          for style in Regular Bold Italic BoldItalic ExtraLight ExtraLightItalic Light LightItalic Medium MediumItalic SemiBold SemiBoldItalic Thin ThinItalic ExtraBold ExtraBoldItalic; do
-            JETBRAINS_FONT="fonts/jetbrains/JetBrainsMono-${style}.ttf"
-            MAPLE_FONT="fonts/maple/MapleMonoNormal-${style}.ttf"
-            if [[ -f "$JETBRAINS_FONT" && -f "$MAPLE_FONT" ]]; then
-              echo "Fusing $JETBRAINS_FONT and $MAPLE_FONT..."
-              pyftmerge "$MAPLE_FONT" "$JETBRAINS_FONT"
-              mv merged.ttf "fused_fonts/JetBrainsMapleMono-${style}.ttf"
-            fi
-          done
+      # - name: 🎯 Fuse JetBrains Mono & Maple Font
+      #   run: |
+      #     mkdir -p fused_fonts
+      #     for style in Regular Bold Italic BoldItalic ExtraLight ExtraLightItalic Light LightItalic Medium MediumItalic SemiBold SemiBoldItalic Thin ThinItalic ExtraBold ExtraBoldItalic; do
+      #       JETBRAINS_FONT="fonts/jetbrains/JetBrainsMono-${style}.ttf"
+      #       MAPLE_FONT="fonts/maple/MapleMonoNormal-${style}.ttf"
+      #       if [[ -f "$JETBRAINS_FONT" && -f "$MAPLE_FONT" ]]; then
+      #         echo "Fusing $JETBRAINS_FONT and $MAPLE_FONT..."
+      #         pyftmerge "$MAPLE_FONT" "$JETBRAINS_FONT"
+      #         mv merged.ttf "fused_fonts/JetBrainsMapleMono-${style}.ttf"
+      #       fi
+      #     done
 
-      - name: 📦 Create ZIP Archive
-        run: |
-          zip -r JetBrainsMapleMono.zip fused_fonts/
+      # - name: 📦 Create ZIP Archive
+      #   run: |
+      #     zip -r JetBrainsMapleMono.zip fused_fonts/
 
       - name: 🔢 Generate Tag Name
         id: generate_tag
