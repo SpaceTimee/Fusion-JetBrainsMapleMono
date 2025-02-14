@@ -20,8 +20,8 @@ jobs:
       maple_release_tag: ${{ steps.check_release.outputs.maple_release_tag }}
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      # - name: Checkout Repository
+      #   uses: actions/checkout@v4
 
       - name: 获取上一次的 run_id
         run: |
@@ -31,7 +31,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
-      - name: 🔍 Download Release Tags
+      - name: Download Release Tags
         continue-on-error: true
         uses: actions/download-artifact@v4
         with:
@@ -68,22 +68,20 @@ jobs:
           path: "*release_tag.txt"
 
   fuse_and_release_typefaces:
-    name: Fuse & Release Typefaces
+    name: Fuse and Release Typefaces
     runs-on: ubuntu-latest
     needs: check_updates
     if: needs.check_updates.outputs.is_updated == 'true'
 
     steps:
-      - name: 🐍 Set up Python
-        uses: actions/setup-python@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.13.2"
-
-      - name: 📦 Install Dependencies
+          check-latest: true
         run: |
           pip install gftools fonttools
 
-      - name: 🔽 Clone and Build JetBrains Mono from Source
+      - name: Clone and Build JetBrains Mono
         run: |
           git clone --depth 1 https://github.com/JetBrains/JetBrainsMono.git
           cd JetBrainsMono
@@ -92,7 +90,7 @@ jobs:
           mkdir -p fonts/jetbrains
           cp -r JetBrainsMono/fonts/ttf/* fonts/jetbrains/
 
-      - name: 🔽 Clone and Build Maple Font from Source
+      - name: Clone and Build Maple Font
         run: |
           git clone --depth 1 https://github.com/subframe7536/maple-font.git
           cd maple-font
@@ -102,7 +100,7 @@ jobs:
           mkdir -p fonts/maple
           cp -r maple-font/fonts/TTF/* fonts/maple/
 
-      - name: 🎯 Fuse JetBrains Mono & Maple Font
+      - name: Fuse JetBrains Mono & Maple Font
         run: |
           mkdir -p fused_fonts
           for style in Regular Bold Italic BoldItalic ExtraLight ExtraLightItalic Light LightItalic Medium MediumItalic SemiBold SemiBoldItalic Thin ThinItalic ExtraBold ExtraBoldItalic; do
