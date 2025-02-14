@@ -92,7 +92,7 @@ jobs:
           gftools builder sources/config.yaml
           cd ..
           mkdir -p source-fonts/jetbrains
-          mv -r JetBrainsMono/fonts/ttf/* source-fonts/jetbrains/
+          cp -r JetBrainsMono/fonts/ttf/* source-fonts/jetbrains/
         env:
           LATEST_JETBRAINS_RELEASE_TAG: ${{ needs.check_release_updates.outputs.LATEST_JETBRAINS_RELEASE_TAG }}
 
@@ -104,7 +104,7 @@ jobs:
           python build.py --normal --no-hinted --liga --no-nerd-font --cn --ttf-only
           cd ..
           mkdir -p source-fonts/maple
-          mv -r maple-font/fonts/TTF/* source-fonts/maple/
+          cp -r maple-font/fonts/TTF/* source-fonts/maple/
         env:
           LATEST_MAPLE_RELEASE_TAG: ${{ needs.check_release_updates.outputs.LATEST_MAPLE_RELEASE_TAG }}
 
