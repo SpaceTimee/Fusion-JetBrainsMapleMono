@@ -52,15 +52,14 @@ jobs:
             echo "is_updated=true" >> $GITHUB_OUTPUT
             echo "$JETBRAINS_RELEASE" > jetbrains_release.txt
             echo "$MAPLE_RELEASE" > maple_release.txt
-            echo "jetbrains_release=$JETBRAINS_RELEASE" > $GITHUB_OUTPUT
-            echo "maple_release=$MAPLE_RELEASE" > $GITHUB_OUTPUT
+            echo "jetbrains_release=$JETBRAINS_RELEASE" >> $GITHUB_OUTPUT
+            echo "maple_release=$MAPLE_RELEASE" >> $GITHUB_OUTPUT
           else
             echo "is_updated=false" >> $GITHUB_OUTPUT
             echo "$JETBRAINS_RELEASE" > jetbrains_release.txt #
             echo "$MAPLE_RELEASE" > maple_release.txt #
-            echo "jetbrains_release=$JETBRAINS_RELEASE" > $GITHUB_OUTPUT  #
-            echo ${{ steps.check_release.outputs.jetbrains_release }}
-            echo "maple_release=$MAPLE_RELEASE" > $GITHUB_OUTPUT  #
+            echo "jetbrains_release=$JETBRAINS_RELEASE" >> $GITHUB_OUTPUT  #
+            echo "maple_release=$MAPLE_RELEASE" >> $GITHUB_OUTPUT  #
           fi
 
       - name: Upload Artifact
