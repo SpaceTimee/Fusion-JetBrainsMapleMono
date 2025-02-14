@@ -71,7 +71,7 @@ jobs:
     name: Fuse & Release Typefaces
     runs-on: ubuntu-latest
     needs: check_updates
-    if: needs.check_updates.outputs.is_updated == "true"
+    if: needs.check_updates.outputs.is_updated == true
 
     steps:
       - name: 🐍 Set up Python
