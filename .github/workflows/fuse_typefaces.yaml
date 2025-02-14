@@ -2,11 +2,11 @@ name: Fuse Typefaces
 
 on:
   schedule:
-    - cron: */5 * * * *
+    - cron: "*/5 * * * *"
 
   push:
     branches:
-      - **
+      - "**"
 
   workflow_dispatch:
 
@@ -34,9 +34,6 @@ jobs:
           name: release
           run-id: ${{ env.PREV_RUN_ID }}
           github-token: ${{ secrets.FUSION_JET_BRAINS_MAPLE_MONO_TOKEN }}
-
-      - name: Display structure of downloaded files
-        run: ls -R
 
       - name: 🔍 Check Latest Release Updates
         id: check_release
