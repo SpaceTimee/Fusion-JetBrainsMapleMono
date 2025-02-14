@@ -126,7 +126,7 @@ jobs:
       - name: 🔢 Generate Tag Name
         id: generate_tag
         run: |
-          JETBRAINS_VERSION="${{ needs.check_updates.outputs.jetbrains_release }}"
+          JETBRAINS_VERSION=${{ needs.check_updates.outputs.jetbrains_release }}
           MAPLE_VERSION="${{ needs.check_updates.outputs.maple_release }}"
 
           # 去掉 v 前缀
