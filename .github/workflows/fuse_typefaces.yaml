@@ -49,7 +49,7 @@ jobs:
           LATEST_JETBRAINS_RELEASE_TAG=$(curl -s https://api.github.com/repos/JetBrains/JetBrainsMono/releases/latest | jq -r '.tag_name')
           LATEST_MAPLE_RELEASE_TAG=$(curl -s https://api.github.com/repos/subframe7536/maple-font/releases/latest | jq -r '.tag_name')
 
-          if [[ "$PREV_JETBRAINS_RELEASE_TAG" != "$LATEST_JETBRAINS_RELEASE_TAG" || "$PREV_MAPLE_RELEASE_TAG" != "$LATEST_MAPLE_RELEASE_TAG" ]]; then
+          if [[ "$PREV_JETBRAINS_RELEASE_TAG" == "$LATEST_JETBRAINS_RELEASE_TAG" || "$PREV_MAPLE_RELEASE_TAG" != "$LATEST_MAPLE_RELEASE_TAG" ]]; then
             echo "$LATEST_JETBRAINS_RELEASE_TAG" > jetbrains_release_tag.txt
             echo "$LATEST_MAPLE_RELEASE_TAG" > maple_release_tag.txt
             echo "IS_UPDATED=true" >> $GITHUB_OUTPUT
@@ -74,7 +74,7 @@ jobs:
     name: Fuse And Release Fonts
     runs-on: ubuntu-latest
     needs: check_release_updates
-    # if: needs.check_release_updates.outputs.IS_UPDATED == 'true'
+    if: needs.check_release_updates.outputs.IS_UPDATED == 'true'
 
     steps:
       - name: Setup Python
