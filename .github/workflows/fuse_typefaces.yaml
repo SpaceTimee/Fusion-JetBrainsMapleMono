@@ -12,7 +12,7 @@ on:
 
 jobs:
   check_release_updates:
-    name: Check Updates
+    name: Check Release Updates
     runs-on: ubuntu-latest
     outputs:
       is_updated: ${{ steps.check_release_updates.outputs.is_updated }}
@@ -70,41 +70,41 @@ jobs:
           name: release_tags
           path: "*_release_tag.txt"
 
-  fuse_and_release_typefaces:
-    name: Fuse and Release Typefaces
+  fuse_and_release_fonts:
+    name: Fuse And Release Fonts
     runs-on: ubuntu-latest
     needs: check_release_updates
     if: needs.check_release_updates.outputs.is_updated == 'true'
 
     steps:
-      - name: Set up Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           check-latest: true
 
-      - name: Install Dependencies
+      - name: Install Pip Dependencies
         run: pip install gftools fonttools
 
-      - name: Clone and Build JetBrains Mono
+      - name: Build JetBrains
         run: |
-          git clone --depth 1 https://github.com/JetBrains/JetBrainsMono.git
+          git clone -b "${{ needs.check_release_updates.outputs.latest_jetbrains_release_tag }}" --single-branch https://github.com/JetBrains/JetBrainsMono.git
           cd JetBrainsMono
           gftools builder sources/config.yaml
           cd ..
-          mkdir -p fonts/jetbrains
-          cp -r JetBrainsMono/fonts/ttf/* fonts/jetbrains/
+          mkdir -p source-fonts/jetbrains
+          cp -r JetBrainsMono/fonts/ttf/* source-fonts/jetbrains/
 
-      - name: Clone and Build Maple Font
+      - name: Build Maple
         run: |
-          git clone --depth 1 https://github.com/subframe7536/maple-font.git
+          git clone -b "${{ needs.check_release_updates.outputs.latest_maple_release_tag }}" --single-branch https://github.com/subframe7536/maple-font.git
           cd maple-font
           pip install -r requirements.txt
-          python build.py --normal --no-hinted --no-nerd-font --ttf-only --cn --liga
+          python build.py --normal --no-hinted --liga --no-nerd-font --cn --ttf-only
           cd ..
-          mkdir -p fonts/maple
-          cp -r maple-font/fonts/TTF/* fonts/maple/
+          mkdir -p source-fonts/maple
+          cp -r maple-font/fonts/TTF/* source-fonts/maple/
 
-      - name: Fuse JetBrains Mono & Maple Font
+      - name: Fuse Fonts
         run: |
           mkdir -p fused_fonts
           for style in Regular Bold Italic BoldItalic ExtraLight ExtraLightItalic Light LightItalic Medium MediumItalic SemiBold SemiBoldItalic Thin ThinItalic ExtraBold ExtraBoldItalic; do
@@ -117,11 +117,10 @@ jobs:
             fi
           done
 
-      - name: 📦 Create ZIP Archive
-        run: |
-          zip -r JetBrainsMapleMono.zip fused_fonts
+      - name: Zip Fonts
+        run: zip -r JetBrainsMapleMono.zip fused_fonts/
 
-      - name: 🔢 Generate Tag Name
+      - name: Generate Release Tag
         id: generate_tag
         run: |
           JETBRAINS_VERSION="${{ needs.check_release_updates.outputs.latest_jetbrains_release_tag }}"
@@ -140,7 +139,7 @@ jobs:
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
           echo "Generated tag: $TAG_NAME"
 
-      - name: 🚀 Publish to GitHub Releases
+      - name: Release Fonts
         uses: softprops/action-gh-release@v1
         with:
           files: JetBrainsMapleMono.zip
