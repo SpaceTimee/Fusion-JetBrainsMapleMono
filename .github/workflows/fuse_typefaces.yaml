@@ -122,7 +122,7 @@ jobs:
           done
 
       - name: Zip Fonts
-        run: zip -r -j JetbrainsMapleMono.zip fused_fonts/
+        run: zip -r -j JetbrainsMapleMono-${{ matrix.hint }}.zip fused_fonts/
 
       - name: Generate Release Tag
         run: |
