@@ -78,7 +78,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        hint: [hinted, no-hinted]
+        narrow: [{ suffix: -N, args: --cn-narrow }, { suffix: "", args: "" }]
 
     steps:
       - name: Setup Python
@@ -106,7 +106,7 @@ jobs:
           git clone -b "$LATEST_MAPLE_RELEASE_TAG" --single-branch https://github.com/subframe7536/maple-font.git
           cd maple-font
           pip install -r requirements.txt
-          python build.py --normal --liga --no-nerd-font --cn --ttf-only --${{ matrix.hint }}
+          python build.py --normal --liga --no-nerd-font --cn --hinted --ttf-only ${{ matrix.narrow.args }}
           cd ..
           mkdir -p source-fonts/maple
           cp -r maple-font/fonts/CN/* source-fonts/maple/
@@ -122,7 +122,7 @@ jobs:
           done
 
       - name: Zip Fonts
-        run: zip -r -j JetbrainsMapleMono-${{ matrix.hint }}.zip fused_fonts/
+        run: zip -r -j JetbrainsMapleMono${{ matrix.narrow.suffix }}.zip fused_fonts/
 
       - name: Generate Release Tag
         run: |
@@ -136,7 +136,7 @@ jobs:
       - name: Release Fonts
         uses: softprops/action-gh-release@v2
         with:
-          files: JetbrainsMapleMono-${{ matrix.hint }}.zip
+          files: JetbrainsMapleMono${{ matrix.narrow.suffix }}.zip
           body: >
             Fused with
             [JetBrains Mono ${{ needs.check_release_updates.outputs.LATEST_JETBRAINS_RELEASE_TAG }}](https://github.com/JetBrains/JetBrainsMono/releases/tag/${{ needs.check_release_updates.outputs.LATEST_JETBRAINS_RELEASE_TAG }}) &
