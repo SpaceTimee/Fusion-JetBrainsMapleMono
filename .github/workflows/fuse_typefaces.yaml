@@ -112,7 +112,7 @@ jobs:
         run: |
           mkdir -p fused_fonts
           for style in Regular Bold Italic BoldItalic ExtraLight ExtraLightItalic Light LightItalic Medium MediumItalic SemiBold SemiBoldItalic Thin ThinItalic ExtraBold ExtraBoldItalic; do
-            fonttools merge "source-fonts/maple/MapleMonoNormal-${style}.ttf" "source-fonts/jetbrains/JetBrainsMono-${style}.ttf"
+            pyftmerge "source-fonts/maple/MapleMonoNormal-${style}.ttf" "source-fonts/jetbrains/JetBrainsMono-${style}.ttf"
             mv merged.ttf "fused_fonts/JetbrainsMapleMono-${style}.ttf"
           done
 
