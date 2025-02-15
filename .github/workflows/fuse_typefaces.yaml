@@ -105,6 +105,7 @@ jobs:
           python build.py --normal --no-hinted --liga --no-nerd-font --cn --ttf-only
           cd ..
           mkdir -p source-fonts/maple
+          ls -R maple-font/fonts/
           cp -r maple-font/fonts/TTF/* source-fonts/maple/
         env:
           LATEST_MAPLE_RELEASE_TAG: ${{ needs.check_release_updates.outputs.LATEST_MAPLE_RELEASE_TAG }}
@@ -113,7 +114,7 @@ jobs:
         run: |
           mkdir -p fused_fonts
           for style in Regular Bold Italic BoldItalic ExtraLight ExtraLightItalic Light LightItalic Medium MediumItalic SemiBold SemiBoldItalic Thin ThinItalic ExtraBold ExtraBoldItalic; do
-            fonttools merge "source-fonts/jetbrains/JetBrainsMono-${style}.ttf" "source-fonts/maple/MapleMonoNormal-${style}.ttf"
+            fonttools merge "source-fonts/maple/MapleMonoNormal-${style}.ttf" "source-fonts/jetbrains/JetBrainsMono-${style}.ttf"
             mv merged.ttf "fused_fonts/JetbrainsMapleMono-${style}.ttf"
           done
 
