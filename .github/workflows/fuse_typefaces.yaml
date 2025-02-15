@@ -94,13 +94,7 @@ jobs:
         run: |
           git clone -b "$LATEST_JETBRAINS_RELEASE_TAG" --single-branch https://github.com/JetBrains/JetBrainsMono.git
           cd JetBrainsMono
-
-          if [[ "${{ matrix.hint }}" == "hinted" ]]; then
-            gftools builder sources/config.yaml
-          else
-            gftools builder sources/config.yaml --no-hinting
-          fi
-
+          gftools builder sources/config.yaml
           cd ..
           mkdir -p source-fonts/jetbrains
           cp -r JetBrainsMono/fonts/ttf/* source-fonts/jetbrains/
