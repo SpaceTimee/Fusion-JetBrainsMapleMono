@@ -77,7 +77,7 @@ jobs:
     if: needs.check_release_updates.outputs.IS_UPDATED == 'true'
     strategy:
       matrix:
-        hint: [hinted, unhinted]
+        hint: [hinted, no-hinted]
         nerd: [nerd-font, no-nerd-font]
 
     steps:
