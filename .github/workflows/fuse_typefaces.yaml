@@ -80,6 +80,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
+          python-version: 3.x
           check-latest: true
 
       - name: Install Pip Dependencies
@@ -112,7 +113,7 @@ jobs:
         run: |
           mkdir -p fused_fonts
           for style in Regular Bold Italic BoldItalic ExtraLight ExtraLightItalic Light LightItalic Medium MediumItalic SemiBold SemiBoldItalic Thin ThinItalic ExtraBold ExtraBoldItalic; do
-            pyftmerge "source-fonts/maple/MapleMonoNormal-${style}.ttf" "source-fonts/jetbrains/JetBrainsMono-${style}.ttf"
+            fonttools merge "source-fonts/jetbrains/JetBrainsMono-${style}.ttf" "source-fonts/maple/MapleMonoNormal-${style}.ttf"
             mv merged.ttf "fused_fonts/JetbrainsMapleMono-${style}.ttf"
           done
 
