@@ -119,6 +119,7 @@ jobs:
           mkdir -p fused_fonts
           for style in Regular Bold Italic BoldItalic ExtraLight ExtraLightItalic Light LightItalic Medium MediumItalic SemiBold SemiBoldItalic Thin ThinItalic ExtraBold ExtraBoldItalic; do
             fonttools merge "source-fonts/maple/MapleMonoNormal-CN-${style}.ttf" "source-fonts/jetbrains/JetBrainsMono-${style}.ttf"
+            gftools rename-font merged.ttf "JetbrainsMaple Mono"
             mv merged.ttf "fused_fonts/JetbrainsMapleMono-${style}.ttf"
           done
 
@@ -142,6 +143,7 @@ jobs:
             Fused with
             [JetBrains Mono ${{ needs.check_release_updates.outputs.LATEST_JETBRAINS_RELEASE_TAG }}](https://github.com/JetBrains/JetBrainsMono/releases/tag/${{ needs.check_release_updates.outputs.LATEST_JETBRAINS_RELEASE_TAG }}) &
             [Maple Mono ${{ needs.check_release_updates.outputs.LATEST_MAPLE_RELEASE_TAG }}](https://github.com/subframe7536/maple-font/releases/tag/${{ needs.check_release_updates.outputs.LATEST_MAPLE_RELEASE_TAG }})
+
 
             Built with
             [Github Workflow](https://$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID)
