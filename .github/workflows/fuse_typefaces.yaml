@@ -119,12 +119,12 @@ jobs:
           mkdir -p fused_fonts
           for style in Regular Bold Italic BoldItalic ExtraLight ExtraLightItalic Light LightItalic Medium MediumItalic SemiBold SemiBoldItalic Thin ThinItalic ExtraBold ExtraBoldItalic; do
             fonttools merge "source-fonts/maple/MapleMonoNormal-CN-${style}.ttf" "source-fonts/jetbrains/JetBrainsMono-${style}.ttf"
-            gftools rename-font merged.ttf "JetbrainsMaple Mono"
-            mv merged.ttf "fused_fonts/JetbrainsMapleMono-${style}.ttf"
+            gftools rename-font merged.ttf "JetBrains Maple Mono"
+            mv merged.ttf "fused_fonts/JetBrainsMapleMono-${style}.ttf"
           done
 
       - name: Zip Fonts
-        run: zip -r -j JetbrainsMapleMono${{ matrix.nerd.suffix }}${{ matrix.narrow.suffix }}.zip fused_fonts/
+        run: zip -r -j JetBrainsMapleMono${{ matrix.nerd.suffix }}${{ matrix.narrow.suffix }}.zip fused_fonts/
 
       - name: Generate Release Tag
         run: |
@@ -138,7 +138,7 @@ jobs:
       - name: Release Fonts
         uses: softprops/action-gh-release@v2
         with:
-          files: JetbrainsMapleMono${{ matrix.nerd.suffix }}${{ matrix.narrow.suffix }}.zip
+          files: JetBrainsMapleMono${{ matrix.nerd.suffix }}${{ matrix.narrow.suffix }}.zip
           tag_name: ${{ env.RELEASE_TAG }}
           name: ${{ env.RELEASE_TAG }}
           body: >
@@ -149,7 +149,6 @@ jobs:
 
             Built with
             [Github Workflow](https://$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID)
-          preserve_order: true
           append-body: false
           draft: false
           prerelease: false
