@@ -120,7 +120,6 @@ jobs:
           for style in Regular Bold Italic BoldItalic ExtraLight ExtraLightItalic Light LightItalic Medium MediumItalic SemiBold SemiBoldItalic Thin ThinItalic ExtraBold ExtraBoldItalic; do
             fonttools merge "source-fonts/maple/MapleMonoNormal-CN-${style}.ttf" "source-fonts/jetbrains/JetBrainsMono-${style}.ttf"
             ttx merged.ttf
-            cat merged.ttx  #
 
             # 修改字体名称（Family Name、Subfamily Name、版权信息等）
             sed -i 's/<namerecord nameID="1".*>/<namerecord nameID="1" platformID="3" platEncID="1" langID="0x409">New Font Name<\/namerecord>/g' merged.ttx
@@ -135,6 +134,7 @@ jobs:
             # 修改 head 表创建日期（时间戳格式为十六进制）
             sed -i 's/<created value=".*"\/>/<created value="0x5F1A8000"\/>/g' merged.ttx  # 2025-02-15 示例
 
+            echo "finished" #
             ttx -o merged.ttf merged.ttx  # 生成 modified_font.ttf
             cat merged.ttx  #
             mv merged.ttf "fused_fonts/JetbrainsMapleMono-${style}.ttf"
