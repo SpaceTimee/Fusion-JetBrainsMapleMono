@@ -152,7 +152,7 @@ jobs:
 
 
             Built with
-            [Github Workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            [Github Workflow ${{ github.run_number }}](${{ github.run_url }})
           append-body: false
           draft: false
           prerelease: false
