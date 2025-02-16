@@ -120,7 +120,6 @@ jobs:
           for style in Regular Bold Italic BoldItalic ExtraLight ExtraLightItalic Light LightItalic Medium MediumItalic SemiBold SemiBoldItalic Thin ThinItalic ExtraBold ExtraBoldItalic; do
             fonttools merge "source-fonts/maple/MapleMonoNormal-CN-${style}.ttf" "source-fonts/jetbrains/JetBrainsMono-${style}.ttf"
             gftools rename-font merged.ttf "JetbrainsMaple Mono"
-            cat merged.ttx  #
             mv merged.ttf "fused_fonts/JetbrainsMapleMono-${style}.ttf"
           done
 
