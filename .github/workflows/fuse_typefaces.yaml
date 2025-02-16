@@ -59,9 +59,9 @@ jobs:
             echo "IS_UPDATED=false" >> $GITHUB_OUTPUT
           fi
 
-          echo "Preview Jetbrains Release Tag: $PREV_JETBRAINS_RELEASE_TAG"
+          echo "Preview JetBrains Release Tag: $PREV_JETBRAINS_RELEASE_TAG"
           echo "Preview Maple Release Tag: $PREV_MAPLE_RELEASE_TAG"
-          echo "Latest Jetbrains Release Tag: $LATEST_JETBRAINS_RELEASE_TAG"
+          echo "Latest JetBrains Release Tag: $LATEST_JETBRAINS_RELEASE_TAG"
           echo "Latest Maple Release Tag: $LATEST_MAPLE_RELEASE_TAG"
 
       - name: Upload Release Tags
@@ -78,8 +78,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        nerd: [{ suffix: -NF, args: --nerd-font }, { suffix: "", args: --no-nerd-font }]
-        narrow: [{ suffix: -N, args: --cn-narrow }, { suffix: "", args: "" }]
+        nerd:
+          - suffix: -NF
+            args: --nerd-font
+          - suffix: ""
+            args: --no-nerd-font
+        narrow:
+          - suffix: -N
+            args: --cn-narrow
+          - suffix: ""
+            args: ""
 
     steps:
       - name: Setup Python
@@ -91,7 +99,7 @@ jobs:
       - name: Install Pip Dependencies
         run: pip install gftools fonttools
 
-      - name: Build Jetbrains
+      - name: Build JetBrains
         run: |
           git clone -b "$LATEST_JETBRAINS_RELEASE_TAG" --single-branch https://github.com/JetBrains/JetBrainsMono.git
           cd JetBrainsMono
