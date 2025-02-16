@@ -74,7 +74,7 @@ jobs:
     name: Fuse Release Fonts
     runs-on: ubuntu-latest
     needs: check_release_updates
-    if: ${{ env.IS_UPDATED }} == 'true'
+    if: ${{ needs.check_release_updates.outputs.IS_UPDATED }} == 'true'
     strategy:
       fail-fast: false
       matrix:
@@ -89,7 +89,6 @@ jobs:
           - SUFFIX: ""
             ARGS: ""
     env:
-      IS_UPDATED: ${{ needs.check_release_updates.outputs.IS_UPDATED }}
       LATEST_JETBRAINS_RELEASE_TAG: ${{ needs.check_release_updates.outputs.LATEST_JETBRAINS_RELEASE_TAG }}
       LATEST_MAPLE_RELEASE_TAG: ${{ needs.check_release_updates.outputs.LATEST_MAPLE_RELEASE_TAG }}
 
