@@ -70,24 +70,28 @@ jobs:
           name: release_tags
           path: "*_release_tag.txt"
 
-  fuse_and_release_fonts:
-    name: Fuse And Release Fonts
+  fuse_release_fonts:
+    name: Fuse Release Fonts
     runs-on: ubuntu-latest
     needs: check_release_updates
-    if: needs.check_release_updates.outputs.IS_UPDATED == 'true'
+    if: ${{ env.IS_UPDATED == 'true' }}
     strategy:
       fail-fast: false
       matrix:
-        nerd:
-          - suffix: -NF
-            args: --nerd-font
-          - suffix: ""
-            args: --no-nerd-font
-        narrow:
-          - suffix: -N
-            args: --cn-narrow
-          - suffix: ""
-            args: ""
+        NERD:
+          - SUFFIX: -NF
+            ARGS: --nerd-font
+          - SUFFIX: ""
+            ARGS: --no-nerd-font
+        NARROW:
+          - SUFFIX: -N
+            ARGS: --cn-narrow
+          - SUFFIX: ""
+            ARGS: ""
+    env:
+      IS_UPDATED: ${{ needs.check_release_updates.outputs.IS_UPDATED }}
+      LATEST_JETBRAINS_RELEASE_TAG: ${{ needs.check_release_updates.outputs.LATEST_JETBRAINS_RELEASE_TAG }}
+      LATEST_MAPLE_RELEASE_TAG: ${{ needs.check_release_updates.outputs.LATEST_MAPLE_RELEASE_TAG }}
 
     steps:
       - name: Setup Python
@@ -95,6 +99,7 @@ jobs:
         with:
           python-version: 3.x
           check-latest: true
+          cache: pip
 
       - name: Install Pip Dependencies
         run: pip install gftools fonttools
@@ -107,46 +112,39 @@ jobs:
           cd ..
           mkdir -p source-fonts/jetbrains
           cp -r JetBrainsMono/fonts/ttf/* source-fonts/jetbrains/
-        env:
-          LATEST_JETBRAINS_RELEASE_TAG: ${{ needs.check_release_updates.outputs.LATEST_JETBRAINS_RELEASE_TAG }}
 
       - name: Build Maple
         run: |
           git clone -b "$LATEST_MAPLE_RELEASE_TAG" --single-branch https://github.com/subframe7536/maple-font.git
           cd maple-font
           pip install -r requirements.txt
-          python build.py --normal --liga --cn --hinted --ttf-only ${{ matrix.nerd.args }} ${{ matrix.narrow.args }}
+          python build.py --normal --liga --cn --hinted --ttf-only ${{ matrix.NERD.ARGS }} ${{ matrix.NARROW.ARGS }}
           cd ..
           mkdir -p source-fonts/maple
           cp -r maple-font/fonts/CN/* source-fonts/maple/
-        env:
-          LATEST_MAPLE_RELEASE_TAG: ${{ needs.check_release_updates.outputs.LATEST_MAPLE_RELEASE_TAG }}
 
       - name: Fuse Fonts
         run: |
           mkdir -p fused_fonts
-          for style in Regular Bold Italic BoldItalic ExtraLight ExtraLightItalic Light LightItalic Medium MediumItalic SemiBold SemiBoldItalic Thin ThinItalic ExtraBold ExtraBoldItalic; do
+          for style in Thin ThinItalic ExtraLight ExtraLightItalic Light LightItalic Regular Medium MediumItalic SemiBold SemiBoldItalic Bold BoldItalic ExtraBold ExtraBoldItalic; do
             fonttools merge "source-fonts/maple/MapleMonoNormal-CN-${style}.ttf" "source-fonts/jetbrains/JetBrainsMono-${style}.ttf"
             gftools rename-font merged.ttf "JetBrains Maple Mono"
             mv merged.ttf "fused_fonts/JetBrainsMapleMono-${style}.ttf"
           done
 
       - name: Zip Fonts
-        run: zip -r -j JetBrainsMapleMono${{ matrix.nerd.suffix }}${{ matrix.narrow.suffix }}.zip fused_fonts/
+        run: zip -r -j JetBrainsMapleMono${{ matrix.NERD.SUFFIX }}${{ matrix.NARROW.SUFFIX }}.zip fused_fonts/
 
       - name: Generate Release Tag
         run: |
-          RELEASE_TAG="1.$(echo "$LATEST_JETBRAINS_RELEASE_TAG" | sed 's/^v//' | tr -d '.').$(echo "$LATEST_MAPLE_RELEASE_TAG" | sed 's/^v//' | tr -d '.')"
+          RELEASE_TAG="1.$(tr -d '.' <<<${LATEST_JETBRAINS_RELEASE_TAG//v/}).$(tr -d '.' <<<${LATEST_MAPLE_RELEASE_TAG//v/})"
           echo "RELEASE_TAG=$RELEASE_TAG" >> $GITHUB_ENV
           echo "Release Tag: $RELEASE_TAG"
-        env:
-          LATEST_JETBRAINS_RELEASE_TAG: ${{ needs.check_release_updates.outputs.LATEST_JETBRAINS_RELEASE_TAG }}
-          LATEST_MAPLE_RELEASE_TAG: ${{ needs.check_release_updates.outputs.LATEST_MAPLE_RELEASE_TAG }}
 
       - name: Release Fonts
         uses: softprops/action-gh-release@v2
         with:
-          files: JetBrainsMapleMono${{ matrix.nerd.suffix }}${{ matrix.narrow.suffix }}.zip
+          files: JetBrainsMapleMono${{ matrix.NERD.SUFFIX }}${{ matrix.NARROW.SUFFIX }}.zip
           tag_name: ${{ env.RELEASE_TAG }}
           name: ${{ env.RELEASE_TAG }}
           body: >
