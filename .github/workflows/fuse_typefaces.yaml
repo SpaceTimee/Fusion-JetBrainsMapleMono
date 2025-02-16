@@ -139,6 +139,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: JetbrainsMapleMono${{ matrix.nerd.suffix }}${{ matrix.narrow.suffix }}.zip
+          tag_name: ${{ env.RELEASE_TAG }}
+          name: ${{ env.RELEASE_TAG }}
           body: >
             Fused with
             [JetBrains Mono ${{ needs.check_release_updates.outputs.LATEST_JETBRAINS_RELEASE_TAG }}](https://github.com/JetBrains/JetBrainsMono/releases/tag/${{ needs.check_release_updates.outputs.LATEST_JETBRAINS_RELEASE_TAG }}) &
@@ -147,10 +149,9 @@ jobs:
 
             Built with
             [Github Workflow](https://$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID)
-          tag_name: ${{ env.RELEASE_TAG }}
-          name: ${{ env.RELEASE_TAG }}
+          preserve_order: true
+          append-body: false
           draft: false
           prerelease: false
           make_latest: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          token: ${{ secrets.GH_TOKEN }}
