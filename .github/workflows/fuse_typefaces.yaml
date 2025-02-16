@@ -98,7 +98,6 @@ jobs:
         with:
           python-version: 3.x
           check-latest: true
-          cache: pip
 
       - name: Install Pip Dependencies
         run: pip install gftools fonttools
