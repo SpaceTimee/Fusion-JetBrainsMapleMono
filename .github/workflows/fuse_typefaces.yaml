@@ -149,8 +149,8 @@ jobs:
             gftools drop-hinting merged.ttf.fix merged-unhinted.ttf.fix
             mv merged.ttf.fix "fused_fonts/JetBrainsMapleMono-${style}.ttf"
             mv merged-unhinted.ttf.fix "fused_unhinted_fonts/JetBrainsMapleMono-${style}.ttf"
-            mv OFL.txt "fused_fonts/LICENSE.txt"
-            mv OFL.txt "fused_unhinted_fonts/LICENSE.txt"
+            cp OFL.txt "fused_fonts/LICENSE.txt"
+            cp OFL.txt "fused_unhinted_fonts/LICENSE.txt"
           done
 
       - name: Zip Fonts
