@@ -146,7 +146,7 @@ jobs:
                                               --version "$RELEASE_TAG" \
                                               --copyright "$(printf "Copyright 2020 The JetBrains Mono Project Authors (https://github.com/JetBrains/JetBrainsMono)\nCopyright 2022 The Maple Mono Project Authors (https://github.com/subframe7536/maple-font)\nCopyright 2025 Space Time (https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono)")" \
                                               --license "This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://openfontlicense.org"
-            gftools drop-hinting merged.ttf.fix merged-unhinted.ttf.fix
+            gftools drop-hints merged.ttf.fix merged-unhinted.ttf.fix
             mv merged.ttf.fix "fused_fonts/JetBrainsMapleMono-${style}.ttf"
             mv merged-unhinted.ttf.fix "fused_unhinted_fonts/JetBrainsMapleMono-${style}.ttf"
             cp OFL.txt "fused_fonts/LICENSE.txt"
