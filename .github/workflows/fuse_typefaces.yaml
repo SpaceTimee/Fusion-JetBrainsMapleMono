@@ -125,7 +125,8 @@ jobs:
 
       - name: Build Maple
         run: |
-          git clone -b "$LATEST_MAPLE_RELEASE_TAG" --single-branch https://github.com/subframe7536/maple-font.git
+          # git clone -b "$LATEST_MAPLE_RELEASE_TAG" --single-branch https://github.com/subframe7536/maple-font.git
+          git clone https://github.com/subframe7536/maple-font.git
           cd maple-font
           pip install -r requirements.txt
           python build.py --normal --liga --cn --hinted --ttf-only ${{ matrix.NERD.ARGS }} ${{ matrix.NARROW.ARGS }}
