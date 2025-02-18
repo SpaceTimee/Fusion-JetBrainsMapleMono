@@ -142,7 +142,8 @@ jobs:
                                                 Copyright 2020 The JetBrains Mono Project Authors (https://github.com/JetBrains/JetBrainsMono)
                                                 Copyright 2022 The Maple Mono Project Authors (https://github.com/subframe7536/maple-font)
                                                 Copyright 2025 Space Time (https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono)
-                                                EOF)" \
+                                                EOF
+                                                )" \
                                               --license "OFL-1.1"
             mv merged.ttf "fused_fonts/JetBrainsMapleMono-${style}.ttf"
           done
