@@ -145,17 +145,24 @@ jobs:
                                               --version "$RELEASE_TAG" \
                                               --copyright "$(printf "Copyright 2020 The JetBrains Mono Project Authors (https://github.com/JetBrains/JetBrainsMono)\nCopyright 2022 The Maple Mono Project Authors (https://github.com/subframe7536/maple-font)\nCopyright 2025 Space Time (https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono)")" \
                                               --license "This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://openfontlicense.org"
+            gftools drop-hinting merged.ttf.fix merged-unhinted.ttf.fix
             mv merged.ttf.fix "fused_fonts/JetBrainsMapleMono-${style}.ttf"
+            mv merged-unhinted.ttf.fix "fused_unhinted_fonts/JetBrainsMapleMono-${style}.ttf"
             mv OFL.txt "fused_fonts/LICENSE.txt"
+            mv OFL.txt "fused_unhinted_fonts/LICENSE.txt"
           done
 
       - name: Zip Fonts
-        run: zip -r -j JetBrainsMapleMono${{ matrix.NERD.SUFFIX }}${{ matrix.NARROW.SUFFIX }}.zip fused_fonts/
+        run: |
+          zip -r -j JetBrainsMapleMono${{ matrix.NERD.SUFFIX }}${{ matrix.NARROW.SUFFIX }}.zip fused_fonts/
+          zip -r -j JetBrainsMapleMono${{ matrix.NERD.SUFFIX }}${{ matrix.NARROW.SUFFIX }}-unhinted.zip fused_unhinted_fonts/
 
       - name: Release Fonts
         uses: softprops/action-gh-release@v2
         with:
-          files: JetBrainsMapleMono${{ matrix.NERD.SUFFIX }}${{ matrix.NARROW.SUFFIX }}.zip
+          files: |
+            JetBrainsMapleMono${{ matrix.NERD.SUFFIX }}${{ matrix.NARROW.SUFFIX }}.zip
+            JetBrainsMapleMono${{ matrix.NERD.SUFFIX }}${{ matrix.NARROW.SUFFIX }}-unhinted.zip
           tag_name: ${{ env.RELEASE_TAG }}
           name: ${{ env.RELEASE_TAG }}
           body: >
