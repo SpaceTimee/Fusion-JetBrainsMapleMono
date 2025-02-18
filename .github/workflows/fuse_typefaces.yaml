@@ -133,7 +133,11 @@ jobs:
           cd ..
           mkdir -p source-fonts/maple
           ls -R maple-font/fonts #
-          cp -r maple-font/fonts/${NERD_SUFFIX#-}-CN/* source-fonts/maple/
+          if [[ -z $NERD_SUFFIX ]]; then
+            cp -r maple-font/fonts/CN/* source-fonts/maple/
+          else
+            cp -r maple-font/fonts/NF-CN/* source-fonts/maple/
+          fi
         env:
           NERD_SUFFIX: ${{ matrix.NERD.SUFFIX }}
 
