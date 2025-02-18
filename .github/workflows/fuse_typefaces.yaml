@@ -139,7 +139,7 @@ jobs:
                                               --manufacturer "Space Time" \
                                               --version "$RELEASE_TAG" \
                                               --copyright "Copyright 2020 The JetBrains Mono Project Authors (https://github.com/JetBrains/JetBrainsMono)\nCopyright 2022 The Maple Mono Project Authors (https://github.com/subframe7536/maple-font)\nCopyright 2025 Space Time (https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono)" \
-                                              --license "OFL-1.1"
+                                              --license "This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://openfontlicense.org"
             mv merged.ttf.fix "fused_fonts/JetBrainsMapleMono-${style}.ttf"
           done
 
