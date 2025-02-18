@@ -133,14 +133,14 @@ jobs:
           cd ..
           mkdir -p source-fonts/maple
           ls -R maple-font/fonts #
-          cp -r maple-font/fonts/CN/* source-fonts/maple/
+          cp -r maple-font/fonts/${${{ matrix.NERD.SUFFIX }}#-}-CN/* source-fonts/maple/
 
       - name: Fuse Fonts
         run: |
           mkdir -p fused_fonts
           mkdir -p fused_unhinted_fonts
           for style in Thin ThinItalic ExtraLight ExtraLightItalic Light LightItalic Regular Italic Medium MediumItalic SemiBold SemiBoldItalic Bold BoldItalic ExtraBold ExtraBoldItalic; do
-            fonttools merge "source-fonts/maple/MapleMonoNormal-CN-${style}.ttf" "source-fonts/jetbrains/JetBrainsMono-${style}.ttf"
+            fonttools merge "source-fonts/maple/MapleMonoNormal${{ matrix.NERD.SUFFIX }}-CN-${style}.ttf" "source-fonts/jetbrains/JetBrainsMono-${style}.ttf"
             gftools rename-font merged.ttf "JetBrains Maple Mono"
             gftools update-nameids merged.ttf --uniqueid "JetBrainsMapleMono-${style}-$RELEASE_TAG" \
                                               --description "The free and open-source typeface fused with JetBrains Mono & Maple Mono" \
