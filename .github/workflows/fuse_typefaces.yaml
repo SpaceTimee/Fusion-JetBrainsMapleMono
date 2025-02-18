@@ -115,7 +115,8 @@ jobs:
 
       - name: Build JetBrains
         run: |
-          git clone -b "$LATEST_JETBRAINS_RELEASE_TAG" --single-branch https://github.com/JetBrains/JetBrainsMono.git
+          # git clone -b "$LATEST_JETBRAINS_RELEASE_TAG" --single-branch https://github.com/JetBrains/JetBrainsMono.git
+          git clone https://github.com/JetBrains/JetBrainsMono.git
           cd JetBrainsMono
           gftools builder sources/config.yaml
           cd ..
