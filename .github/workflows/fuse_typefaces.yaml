@@ -132,6 +132,7 @@ jobs:
           python build.py --normal --liga --cn --hinted --ttf-only ${{ matrix.NERD.ARGS }} ${{ matrix.NARROW.ARGS }}
           cd ..
           mkdir -p source-fonts/maple
+          ls -R maple-font/fonts #
           cp -r maple-font/fonts/CN/* source-fonts/maple/
 
       - name: Fuse Fonts
