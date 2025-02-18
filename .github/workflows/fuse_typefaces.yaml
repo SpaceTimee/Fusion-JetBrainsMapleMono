@@ -133,7 +133,9 @@ jobs:
           cd ..
           mkdir -p source-fonts/maple
           ls -R maple-font/fonts #
-          cp -r maple-font/fonts/${${{ matrix.NERD.SUFFIX }}#-}-CN/* source-fonts/maple/
+          cp -r maple-font/fonts/${$NERD_SUFFIX#-}-CN/* source-fonts/maple/
+        env:
+          NERD_SUFFIX: ${{ matrix.NERD.SUFFIX }}
 
       - name: Fuse Fonts
         run: |
