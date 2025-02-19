@@ -91,6 +91,10 @@ jobs:
     env:
       LATEST_JETBRAINS_RELEASE_TAG: ${{ needs.check_release_updates.outputs.LATEST_JETBRAINS_RELEASE_TAG }}
       LATEST_MAPLE_RELEASE_TAG: ${{ needs.check_release_updates.outputs.LATEST_MAPLE_RELEASE_TAG }}
+      NERD_SUFFIX: ${{ matrix.NERD.SUFFIX }}
+      NERD_ARGS: ${{ matrix.NERD.ARGS }}
+      NARROW_SUFFIX: ${{ matrix.NARROW.SUFFIX }}
+      NARROW_ARGS: ${{ matrix.NARROW.ARGS }}
 
     steps:
       - name: Fetch OFL License
@@ -129,7 +133,7 @@ jobs:
           git clone https://github.com/subframe7536/maple-font.git
           cd maple-font
           pip install -r requirements.txt
-          python build.py --normal --liga --cn --hinted --ttf-only ${{ matrix.NERD.ARGS }} ${{ matrix.NARROW.ARGS }}
+          python build.py --normal --liga --cn --hinted --ttf-only $NERD_ARGS $NARROW_ARGS
           cd ..
           mkdir -p source-fonts/maple
           ls -R maple-font/fonts #
@@ -138,15 +142,13 @@ jobs:
           else
             cp -r maple-font/fonts/NF-CN/* source-fonts/maple/
           fi
-        env:
-          NERD_SUFFIX: ${{ matrix.NERD.SUFFIX }}
 
       - name: Fuse Fonts
         run: |
           mkdir -p fused_hinted_fonts
           mkdir -p fused_unhinted_fonts
           for style in Thin ThinItalic ExtraLight ExtraLightItalic Light LightItalic Regular Italic Medium MediumItalic SemiBold SemiBoldItalic Bold BoldItalic ExtraBold ExtraBoldItalic; do
-            fonttools merge "source-fonts/maple/MapleMonoNormal${{ matrix.NERD.SUFFIX }}-CN-${style}.ttf" "source-fonts/jetbrains/JetBrainsMono-${style}.ttf"
+            fonttools merge "source-fonts/maple/MapleMonoNormal$NERD_SUFFIX-CN-${style}.ttf" "source-fonts/jetbrains/JetBrainsMono-${style}.ttf"
             gftools rename-font merged.ttf "JetBrains Maple Mono"
             gftools update-nameids merged.ttf --uniqueid "JetBrainsMapleMono-${style}-$RELEASE_TAG" \
                                               --description "The free and open-source typeface fused with JetBrains Mono & Maple Mono" \
@@ -164,15 +166,15 @@ jobs:
 
       - name: Zip Fonts
         run: |
-          zip -r -j JetBrainsMapleMono${{ matrix.NERD.SUFFIX }}${{ matrix.NARROW.SUFFIX }}-hinted.zip fused_hinted_fonts/
-          zip -r -j JetBrainsMapleMono${{ matrix.NERD.SUFFIX }}${{ matrix.NARROW.SUFFIX }}-unhinted.zip fused_unhinted_fonts/
+          zip -r -j JetBrainsMapleMono$NERD_SUFFIX$NARROW_SUFFIX-hinted.zip fused_hinted_fonts/
+          zip -r -j JetBrainsMapleMono$NERD_SUFFIX$NARROW.SUFFIX-unhinted.zip fused_unhinted_fonts/
 
       - name: Release Fonts
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            JetBrainsMapleMono${{ matrix.NERD.SUFFIX }}${{ matrix.NARROW.SUFFIX }}-hinted.zip
-            JetBrainsMapleMono${{ matrix.NERD.SUFFIX }}${{ matrix.NARROW.SUFFIX }}-unhinted.zip
+            JetBrainsMapleMono$NERD_SUFFIX$NARROW_SUFFIX-hinted.zip
+            JetBrainsMapleMono$NERD_SUFFIX$NARROW_SUFFIX-unhinted.zip
           tag_name: ${{ env.RELEASE_TAG }}
           name: ${{ env.RELEASE_TAG }}
           body: >
