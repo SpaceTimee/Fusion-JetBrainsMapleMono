@@ -137,7 +137,7 @@ jobs:
           gftools builder "sources/config.yaml"
           cd ".."
           mkdir -p "source-fonts/jetbrains"
-          cp -r "JetBrainsMono/fonts/ttf/*" "source-fonts/jetbrains/"
+          cp -r "JetBrainsMono/fonts/ttf/"* "source-fonts/jetbrains/"
 
       - name: Build Maple
         run: |
@@ -149,9 +149,9 @@ jobs:
           cd ".."
           mkdir -p "source-fonts/maple"
           if [[ "$NERD_SUFFIX" == "NF" ]]; then
-            cp -r "maple-font/fonts/NF-CN/*" "source-fonts/maple/"
+            cp -r "maple-font/fonts/NF-CN/"* "source-fonts/maple/"
           else
-            cp -r "maple-font/fonts/CN/*" "source-fonts/maple/"
+            cp -r "maple-font/fonts/CN/"* "source-fonts/maple/"
           fi
 
       - name: Fuse Fonts
