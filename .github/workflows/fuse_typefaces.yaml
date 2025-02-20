@@ -158,7 +158,7 @@ jobs:
         run: |
           mkdir -p "fused-fonts-HT"
           mkdir -p "fused-fonts-NHT"
-          for STYLE in "Thin ThinItalic ExtraLight ExtraLightItalic Light LightItalic Regular Italic Medium MediumItalic SemiBold SemiBoldItalic Bold BoldItalic ExtraBold ExtraBoldItalic"; do
+          for STYLE in "Thin" "ThinItalic" "ExtraLight" "ExtraLightItalic" "Light" "LightItalic" "Regular" "Italic" "Medium" "MediumItalic" "SemiBold" "SemiBoldItalic" "Bold" "BoldItalic" "ExtraBold" "ExtraBoldItalic"; do
             if [[ "$NERD_SUFFIX" == "NF" ]]; then
               fonttools merge "source-fonts/maple/MapleMonoNormal-NF-CN-$STYLE.ttf" "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf" --output-file "fused-font-HT.ttf"
             else
