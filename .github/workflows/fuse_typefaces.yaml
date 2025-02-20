@@ -9,17 +9,17 @@ on:
   workflow_dispatch:
 
 env:
-  LATEST_JETBRAINS_RELEASE_API_URL: https://api.github.com/repos/JetBrains/JetBrainsMono/releases/latest
-  LATEST_MAPLE_RELEASE_API_URL: https://api.github.com/repos/subframe7536/maple-font/releases/latest
-  JETBRAINS_GIT_URL: https://github.com/JetBrains/JetBrainsMono.git
-  MAPLE_GIT_URL: https://github.com/subframe7536/maple-font.git
-  JETBRAINS_COPYRIGHT: Copyright 2020 The JetBrains Mono Project Authors (https://github.com/JetBrains/JetBrainsMono)
-  MAPLE_COPYRIGHT: Copyright 2022 The Maple Mono Project Authors (https://github.com/subframe7536/maple-font)
+  JETBRAINS_GIT_URL: ${{ github.server_url }}/JetBrains/JetBrainsMono.git
+  JETBRAINS_LATEST_RELEASE_API_URL: ${{ github.api_url }}/repos/JetBrains/JetBrainsMono/releases/latest
+  JETBRAINS_COPYRIGHT: Copyright 2020 The JetBrains Mono Project Authors (${{ github.server_url }}/JetBrains/JetBrainsMono)
+  MAPLE_GIT_URL: ${{ github.server_url }}/subframe7536/maple-font.git
+  MAPLE_LATEST_RELEASE_API_URL: ${{ github.api_url }}/repos/subframe7536/maple-font/releases/latest
+  MAPLE_COPYRIGHT: Copyright 2022 The Maple Mono Project Authors (${{ github.server_url }}/subframe7536/maple-font)
   FUSION_NAME: JetBrains Maple Mono
   FUSION_ID: JetBrainsMapleMono
   FUSION_DESCRIPTION: The free and open-source typeface fused with JetBrains Mono & Maple Mono
   FUSION_DEVELOPER: Space Time
-  FUSION_COPYRIGHT: Copyright 2025 Space Time (https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono)
+  FUSION_COPYRIGHT: Copyright 2025 Space Time (${{ github.server_url }}/${{ github.repository }})
   FUSION_LICENSE: "This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://openfontlicense.org"
 
 jobs:
@@ -28,8 +28,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       IS_UPDATED: ${{ steps.check_release_updates.outputs.IS_UPDATED }}
-      LATEST_JETBRAINS_VERSION: ${{ steps.check_release_updates.outputs.LATEST_JETBRAINS_VERSION }}
-      LATEST_MAPLE_VERSION: ${{ steps.check_release_updates.outputs.LATEST_MAPLE_VERSION }}
+      JETBRAINS_LATEST_VERSION: ${{ steps.check_release_updates.outputs.JETBRAINS_LATEST_VERSION }}
+      MAPLE_LATEST_VERSION: ${{ steps.check_release_updates.outputs.MAPLE_LATEST_VERSION }}
 
     steps:
       - name: Fetch Git Folder
@@ -39,7 +39,7 @@ jobs:
 
       - name: Get Preview Run Id
         run: |
-          PREV_RUN_ID="$(gh run list --workflow "$GITHUB_WORKFLOW" --limit 2 --json databaseId --jq ".[1].databaseId")"
+          PREV_RUN_ID="$(gh run list --workflow "$GITHUB_WORKFLOW" --limit 2 --json "databaseId" --jq ".[1].databaseId")"
           echo "PREV_RUN_ID=$PREV_RUN_ID" >> "$GITHUB_ENV"
           echo "Preview Run Id: $PREV_RUN_ID"
         env:
@@ -49,37 +49,37 @@ jobs:
         continue-on-error: true
         uses: actions/download-artifact@v4
         with:
-          name: versions
+          name: Versions
           run-id: ${{ env.PREV_RUN_ID }}
           github-token: ${{ secrets.GH_TOKEN }}
 
       - name: Check Release Updates
         id: check_release_updates
         run: |
-          PREV_JETBRAINS_VERSION="$(cat "jetbrains_version.txt" 2> "/dev/null" || echo "")"
-          PREV_MAPLE_VERSION="$(cat "maple_version.txt" 2> "/dev/null" || echo "")"
-          LATEST_JETBRAINS_VERSION="$(curl -s "$LATEST_JETBRAINS_RELEASE_API_URL" | jq -r ".tag_name")
-          LATEST_MAPLE_VERSION="$(curl -s "$LATEST_MAPLE_RELEASE_API_URL" | jq -r ".tag_name")
+          JETBRAINS_PREV_VERSION="$(cat "jetbrains_version.txt" 2> "/dev/null" || echo "")"
+          MAPLE_PREV_VERSION="$(cat "maple_version.txt" 2> "/dev/null" || echo "")"
+          JETBRAINS_LATEST_VERSION="$(curl -s "$JETBRAINS_LATEST_RELEASE_API_URL" | jq -r ".tag_name")"
+          MAPLE_LATEST_VERSION="$(curl -s "$MAPLE_LATEST_RELEASE_API_URL" | jq -r ".tag_name")"
 
-          if [[ "$PREV_JETBRAINS_VERSION" == "$LATEST_JETBRAINS_VERSION" || "$PREV_MAPLE_VERSION" != "$LATEST_MAPLE_VERSION" ]]; then
-            echo "$LATEST_JETBRAINS_VERSION" > "jetbrains_version.txt"
-            echo "$LATEST_MAPLE_VERSION" > "maple_version.txt"
+          if [[ "$JETBRAINS_PREV_VERSION" == "$JETBRAINS_LATEST_VERSION" || "$MAPLE_PREV_VERSION" != "$MAPLE_LATEST_VERSION" ]]; then
             echo "IS_UPDATED=true" >> "$GITHUB_OUTPUT"
-            echo "LATEST_JETBRAINS_VERSION=$LATEST_JETBRAINS_VERSION" >> "$GITHUB_OUTPUT"
-            echo "LATEST_MAPLE_VERSION=$LATEST_MAPLE_VERSION" >> "$GITHUB_OUTPUT"
+            echo "JETBRAINS_LATEST_VERSION=$JETBRAINS_LATEST_VERSION" >> "$GITHUB_OUTPUT"
+            echo "MAPLE_LATEST_VERSION=$MAPLE_LATEST_VERSION" >> "$GITHUB_OUTPUT"
+            echo "$JETBRAINS_LATEST_VERSION" > "jetbrains_version.txt"
+            echo "$MAPLE_LATEST_VERSION" > "maple_version.txt"
           else
             echo "IS_UPDATED=false" >> "$GITHUB_OUTPUT"
           fi
 
-          echo "Preview JetBrains Version: $PREV_JETBRAINS_VERSION"
-          echo "Preview Maple Version: $PREV_MAPLE_VERSION"
-          echo "Latest JetBrains Version: $LATEST_JETBRAINS_VERSION"
-          echo "Latest Maple Version: $LATEST_MAPLE_VERSION"
+          echo "Preview JetBrains Version: $JETBRAINS_PREV_VERSION"
+          echo "Preview Maple Version: $MAPLE_PREV_VERSION"
+          echo "Latest JetBrains Version: $JETBRAINS_LATEST_VERSION"
+          echo "Latest Maple Version: $MAPLE_LATEST_VERSION"
 
       - name: Upload Versions
         uses: actions/upload-artifact@v4
         with:
-          name: versions
+          name: Versions
           path: "*_version.txt"
 
   fuse_release_fonts:
@@ -101,8 +101,8 @@ jobs:
           - SUFFIX: NNR
             ARGS: ""
     env:
-      LATEST_JETBRAINS_VERSION: ${{ needs.check_release_updates.outputs.LATEST_JETBRAINS_VERSION }}
-      LATEST_MAPLE_VERSION: ${{ needs.check_release_updates.outputs.LATEST_MAPLE_VERSION }}
+      JETBRAINS_LATEST_VERSION: ${{ needs.check_release_updates.outputs.JETBRAINS_LATEST_VERSION }}
+      MAPLE_LATEST_VERSION: ${{ needs.check_release_updates.outputs.MAPLE_LATEST_VERSION }}
       NERD_SUFFIX: ${{ matrix.NERD.SUFFIX }}
       NERD_ARGS: ${{ matrix.NERD.ARGS }}
       NARROW_SUFFIX: ${{ matrix.NARROW.SUFFIX }}
@@ -116,7 +116,7 @@ jobs:
 
       - name: Generate Version
         run: |
-          FUSION_VERSION="1.$(tr -d "." <<< "${LATEST_JETBRAINS_VERSION//v/}").$(tr -d "." <<< "${LATEST_MAPLE_VERSION//v/}")"
+          FUSION_VERSION="1.$(tr -d "." <<< "${JETBRAINS_LATEST_VERSION//v/}").$(tr -d "." <<< "${MAPLE_LATEST_VERSION//v/}")"
           echo "FUSION_VERSION=$FUSION_VERSION" >> $GITHUB_ENV
           echo "Version: $FUSION_VERSION"
 
@@ -131,27 +131,27 @@ jobs:
 
       - name: Build JetBrains
         run: |
-          # git clone -b "$LATEST_JETBRAINS_VERSION" --single-branch $JETBRAINS_GIT_URL
+          # git clone -b "$JETBRAINS_LATEST_VERSION" --single-branch "$JETBRAINS_GIT_URL"
           git clone "$JETBRAINS_GIT_URL"
           cd "JetBrainsMono"
           gftools builder "sources/config.yaml"
-          cd ..
+          cd ".."
           mkdir -p "source-fonts/jetbrains"
           cp -r "JetBrainsMono/fonts/ttf/*" "source-fonts/jetbrains/"
 
       - name: Build Maple
         run: |
-          # git clone -b "$LATEST_MAPLE_VERSION" --single-branch "$MAPLE_GIT_URL"
+          # git clone -b "$MAPLE_LATEST_VERSION" --single-branch "$MAPLE_GIT_URL"
           git clone "$MAPLE_GIT_URL"
           cd "maple-font"
           pip install -r "requirements.txt"
           python build.py --normal --liga --cn --hinted --ttf-only "$NERD_ARGS" "$NARROW_ARGS"
-          cd ..
+          cd ".."
           mkdir -p "source-fonts/maple"
-          if [[ -z "$NERD_SUFFIX" ]]; then
-            cp -r "maple-font/fonts/CN/*" "source-fonts/maple/"
-          else
+          if [[ "$NERD_SUFFIX" == "NF" ]]; then
             cp -r "maple-font/fonts/NF-CN/*" "source-fonts/maple/"
+          else
+            cp -r "maple-font/fonts/CN/*" "source-fonts/maple/"
           fi
 
       - name: Fuse Fonts
@@ -159,18 +159,25 @@ jobs:
           mkdir -p "fused-fonts-HT"
           mkdir -p "fused-fonts-NHT"
           for STYLE in "Thin ThinItalic ExtraLight ExtraLightItalic Light LightItalic Regular Italic Medium MediumItalic SemiBold SemiBoldItalic Bold BoldItalic ExtraBold ExtraBoldItalic"; do
-            fonttools merge "source-fonts/maple/MapleMonoNormal-$NERD_SUFFIX-CN-$STYLE.ttf" "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf"
-            gftools rename-font "merged.ttf" "$FUSION_NAME"
-            gftools update-nameids "merged.ttf" --uniqueid "$FUSION_ID-$STYLE-$FUSION_VERSION" \
-                                              --description "$FUSION_DESCRIPTION" \
-                                              --designer "$FUSION_DEVELOPER" \
-                                              --manufacturer "$FUSION_DEVELOPER" \
-                                              --version "$FUSION_VERSION" \
-                                              --copyright "$JETBRAINS_COPYRIGHT\n$MAPLE_COPYRIGHT\n$FUSION_COPYRIGHT" \
-                                              --license "$FUSION_LICENSE"
-            gftools drop-hints "merged.ttf.fix" "merged-NHT.ttf.fix"
-            mv "merged.ttf.fix" "fused-fonts-HT/$FUSION_ID-$STYLE.ttf"
-            mv "merged-NHT.ttf.fix" "fused-fonts-NHT/$FUSION_ID-$STYLE.ttf"
+            if [[ "$NERD_SUFFIX" == "NF" ]]; then
+              fonttools merge "source-fonts/maple/MapleMonoNormal-NF-CN-$STYLE.ttf" "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf" --output-file "fused-font-HT.ttf"
+            else
+              fonttools merge "source-fonts/maple/MapleMonoNormal-CN-$STYLE.ttf" "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf" --output-file "fused-font-HT.ttf"
+            fi
+
+            gftools rename-font "fused-font-HT.ttf" "$FUSION_NAME"
+            gftools update-nameids "fused-font-HT.ttf" \
+              --uniqueid "$FUSION_ID-$STYLE-$FUSION_VERSION" \
+              --description "$FUSION_DESCRIPTION" \
+              --designer "$FUSION_DEVELOPER" \
+              --manufacturer "$FUSION_DEVELOPER" \
+              --version "$FUSION_VERSION" \
+              --copyright "$JETBRAINS_COPYRIGHT\n$MAPLE_COPYRIGHT\n$FUSION_COPYRIGHT" \
+              --license "$FUSION_LICENSE"
+            gftools drop-hints "fused-font-HT.ttf.fix" "fused-font-NHT.ttf.fix"
+
+            mv "fused-font-HT.ttf.fix" "fused-fonts-HT/$FUSION_ID-$STYLE.ttf"
+            mv "fused-font-NHT.ttf.fix" "fused-fonts-NHT/$FUSION_ID-$STYLE.ttf"
             cp "OFL.txt" "fused-fonts-HT/LICENSE.txt"
             cp "OFL.txt" "fused-fonts-NHT/LICENSE.txt"
           done
@@ -190,12 +197,13 @@ jobs:
           name: ${{ env.FUSION_VERSION }}
           body: >
             Fused with
-            [JetBrains Mono ${{ needs.check_release_updates.outputs.LATEST_JETBRAINS_VERSION }}](https://github.com/JetBrains/JetBrainsMono/releases/tag/${{ needs.check_release_updates.outputs.LATEST_JETBRAINS_VERSION }}) &
-            [Maple Mono ${{ needs.check_release_updates.outputs.LATEST_MAPLE_VERSION }}](https://github.com/subframe7536/maple-font/releases/tag/${{ needs.check_release_updates.outputs.LATEST_MAPLE_VERSION }})
+            [JetBrains Mono $JETBRAINS_LATEST_VERSION](${{ github.server_url }}/JetBrains/JetBrainsMono/releases/tag/$JETBRAINS_LATEST_VERSION) &
+            [Maple Mono $MAPLE_LATEST_VERSION](${{ github.server_url }}/subframe7536/maple-font/releases/tag/$MAPLE_LATEST_VERSION)
 
+            ---
 
             Built with
-            [Github Workflow #${{ github.run_number }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            [Github Workflow #${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
           append-body: false
           draft: false
           prerelease: false
