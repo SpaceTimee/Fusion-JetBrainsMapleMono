@@ -27,7 +27,7 @@ jobs:
     name: Check Release Updates
     runs-on: ubuntu-latest
     outputs:
-      IS_UPDATED: ${{ steps.check_release_updates.outputs.IS_UPDATED }}
+      IS_RELEASE_UPDATED: ${{ steps.check_release_updates.outputs.IS_RELEASE_UPDATED }}
       JETBRAINS_LATEST_VERSION: ${{ steps.check_release_updates.outputs.JETBRAINS_LATEST_VERSION }}
       MAPLE_LATEST_VERSION: ${{ steps.check_release_updates.outputs.MAPLE_LATEST_VERSION }}
 
@@ -37,15 +37,15 @@ jobs:
         with:
           sparse-checkout: .git
 
-      - name: Get Preview Run Id
+      - name: Get Previous Run Id
         run: |
           PREV_RUN_ID="$(gh run list --workflow "$GITHUB_WORKFLOW" --limit 2 --json "databaseId" --jq ".[1].databaseId")"
           echo "PREV_RUN_ID=$PREV_RUN_ID" >> "$GITHUB_ENV"
-          echo "Preview Run Id: $PREV_RUN_ID"
+          echo "Previous Run Id: $PREV_RUN_ID"
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
-      - name: Download Preview Versions
+      - name: Download Previous Versions
         continue-on-error: true
         uses: actions/download-artifact@v4
         with:
@@ -62,34 +62,96 @@ jobs:
           MAPLE_LATEST_VERSION="$(curl -s "$MAPLE_LATEST_RELEASE_API_URL" | jq -r ".tag_name")"
 
           if [[ "$JETBRAINS_PREV_VERSION" == "$JETBRAINS_LATEST_VERSION" || "$MAPLE_PREV_VERSION" != "$MAPLE_LATEST_VERSION" ]]; then
-            echo "IS_UPDATED=true" >> "$GITHUB_OUTPUT"
+            echo "IS_RELEASE_UPDATED=true" >> "$GITHUB_OUTPUT"
             echo "JETBRAINS_LATEST_VERSION=$JETBRAINS_LATEST_VERSION" >> "$GITHUB_OUTPUT"
             echo "MAPLE_LATEST_VERSION=$MAPLE_LATEST_VERSION" >> "$GITHUB_OUTPUT"
             echo "$JETBRAINS_LATEST_VERSION" > "jetbrains_version.txt"
             echo "$MAPLE_LATEST_VERSION" > "maple_version.txt"
           else
-            echo "IS_UPDATED=false" >> "$GITHUB_OUTPUT"
+            echo "IS_RELEASE_UPDATED=false" >> "$GITHUB_OUTPUT"
           fi
 
-          echo "Preview JetBrains Version: $JETBRAINS_PREV_VERSION"
-          echo "Preview Maple Version: $MAPLE_PREV_VERSION"
+          echo "Previous JetBrains Version: $JETBRAINS_PREV_VERSION"
+          echo "Previous Maple Version: $MAPLE_PREV_VERSION"
           echo "Latest JetBrains Version: $JETBRAINS_LATEST_VERSION"
           echo "Latest Maple Version: $MAPLE_LATEST_VERSION"
 
-      - name: Upload Versions
+      - name: Upload Latest Versions
         uses: actions/upload-artifact@v4
         with:
           name: Versions
           path: "*_version.txt"
 
+  check_commit_updates:
+    name: Check Commit Updates
+    runs-on: ubuntu-latest
+    outputs:
+      IS_COMMIT_UPDATED: ${{ steps.check_commit_updates.outputs.IS_COMMIT_UPDATED }}
+      JETBRAINS_LATEST_HASH: ${{ steps.check_commit_updates.outputs.JETBRAINS_LATEST_HASH }}
+      MAPLE_LATEST_HASH: ${{ steps.check_commit_updates.outputs.MAPLE_LATEST_HASH }}
+
+    steps:
+      - name: Fetch Git Folder
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: .git
+
+      - name: Get Previous Run Id
+        run: |
+          PREV_RUN_ID="$(gh run list --workflow "$GITHUB_WORKFLOW" --limit 2 --json "databaseId" --jq ".[1].databaseId")"
+          echo "PREV_RUN_ID=$PREV_RUN_ID" >> "$GITHUB_ENV"
+          echo "Previous Run Id: $PREV_RUN_ID"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      - name: Download Previous Hashs
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: Hashs
+          run-id: ${{ env.PREV_RUN_ID }}
+          github-token: ${{ secrets.GH_TOKEN }}
+
+      - name: Check Commit Updates
+        id: check_commit_updates
+        run: |
+          JETBRAINS_PREV_HASH="$(cat "jetbrains_hash.txt" 2> "/dev/null" || echo "")"
+          MAPLE_PREV_HASH="$(cat "maple_hash.txt" 2> "/dev/null" || echo "")"
+          JETBRAINS_LATEST_HASH="$(git ls-remote --heads "$JETBRAINS_GIT_URL" "master" | cut "-f1")"
+          MAPLE_LATEST_HASH="$(git ls-remote --heads "$MAPLE_GIT_URL" "variable" | cut "-f1")"
+
+          if [[ "$JETBRAINS_PREV_HASH" == "$JETBRAINS_LATEST_HASH" || "$MAPLE_PREV_HASH" != "$MAPLE_LATEST_HASH" ]]; then
+            echo "IS_COMMIT_UPDATED=true" >> "$GITHUB_OUTPUT"
+            echo "JETBRAINS_LATEST_HASH=$JETBRAINS_LATEST_HASH" >> "$GITHUB_OUTPUT"
+            echo "MAPLE_LATEST_HASH=$MAPLE_LATEST_HASH" >> "$GITHUB_OUTPUT"
+            echo "$JETBRAINS_LATEST_HASH" > "jetbrains_hash.txt"
+            echo "$MAPLE_LATEST_HASH" > "maple_hash.txt"
+          else
+            echo "IS_COMMIT_UPDATED=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          echo "Previous JetBrains Hash: $JETBRAINS_PREV_HASH"
+          echo "Previous Maple Hash: $MAPLE_PREV_HASH"
+          echo "Latest JetBrains Hash: $JETBRAINS_LATEST_HASH"
+          echo "Latest Maple Hash: $MAPLE_LATEST_HASH"
+
+      - name: Upload Latest Hashes
+        uses: actions/upload-artifact@v4
+        with:
+          name: Hashes
+          path: "*_hash.txt"
+
   fuse_release_fonts:
     name: Fuse Release Fonts
     runs-on: ubuntu-latest
     needs: check_release_updates
-    if: ${{ needs.check_release_updates.outputs.IS_UPDATED }} == 'true'
+    if: ${{ env.IS_RELEASE_UPDATED == 'true' }} || ${{ env.IS_COMMIT_UPDATED == 'true' }}
     strategy:
       fail-fast: false
       matrix:
+        MODE:
+          - Release
+          - Commit
         NERD:
           - SUFFIX: NF
             ARGS: --nerd-font
@@ -101,8 +163,13 @@ jobs:
           - SUFFIX: NNR
             ARGS: ""
     env:
+      IS_RELEASE_UPDATED: ${{ needs.check_release_updates.outputs.IS_RELEASE_UPDATED }}
+      IS_COMMIT_UPDATED: ${{ needs.check_commit_updates.outputs.IS_COMMIT_UPDATED }}
       JETBRAINS_LATEST_VERSION: ${{ needs.check_release_updates.outputs.JETBRAINS_LATEST_VERSION }}
+      JETBRAINS_LATEST_HASH: ${{ needs.check_commit_updates.outputs.JETBRAINS_LATEST_HASH }}
       MAPLE_LATEST_VERSION: ${{ needs.check_release_updates.outputs.MAPLE_LATEST_VERSION }}
+      MAPLE_LATEST_HASH: ${{ needs.check_commit_updates.outputs.MAPLE_LATEST_HASH }}
+      MODE: ${{ matrix.MODE }}
       NERD_SUFFIX: ${{ matrix.NERD.SUFFIX }}
       NERD_ARGS: ${{ matrix.NERD.ARGS }}
       NARROW_SUFFIX: ${{ matrix.NARROW.SUFFIX }}
@@ -116,7 +183,12 @@ jobs:
 
       - name: Generate Version
         run: |
-          FUSION_VERSION="1.$(tr -d "." <<< "${JETBRAINS_LATEST_VERSION//v/}").$(tr -d "." <<< "${MAPLE_LATEST_VERSION//v/}")"
+          if [[ "$MODE" == "RELEASE" ]]; then
+            FUSION_VERSION="1.$(tr -d "." <<< "${JETBRAINS_LATEST_VERSION//v/}").$(tr -d "." <<< "${MAPLE_LATEST_VERSION//v/}")"
+          else
+            FUSION_VERSION="pre"
+          fi
+
           echo "FUSION_VERSION=$FUSION_VERSION" >> $GITHUB_ENV
           echo "Version: $FUSION_VERSION"
 
@@ -131,8 +203,12 @@ jobs:
 
       - name: Build JetBrains
         run: |
-          # git clone -b "$JETBRAINS_LATEST_VERSION" --single-branch "$JETBRAINS_GIT_URL"
-          git clone "$JETBRAINS_GIT_URL"
+          if [[ "$MODE" == "RELEASE" ]]; then
+            git clone --branch "$JETBRAINS_LATEST_VERSION" --single-branch "$JETBRAINS_GIT_URL"
+          else
+            git clone --depth 1 "$JETBRAINS_GIT_URL"
+          fi
+
           cd "JetBrainsMono"
           gftools builder "sources/config.yaml"
           cd ".."
@@ -141,11 +217,15 @@ jobs:
 
       - name: Build Maple
         run: |
-          # git clone -b "$MAPLE_LATEST_VERSION" --single-branch "$MAPLE_GIT_URL"
-          git clone "$MAPLE_GIT_URL"
+          if [[ "$MODE" == "RELEASE" ]]; then
+            git clone --branch "$MAPLE_LATEST_VERSION" --single-branch "$MAPLE_GIT_URL"
+          else
+            git clone --depth 1 "$MAPLE_GIT_URL"
+          fi
+
           cd "maple-font"
           pip install -r "requirements.txt"
-          python build.py --normal --liga --cn --hinted --ttf-only "$NERD_ARGS" $NARROW_ARGS
+          python "build.py" --normal --liga --cn --hinted --ttf-only "$NERD_ARGS" $NARROW_ARGS
           cd ".."
           mkdir -p "source-fonts/maple"
           if [[ "$NERD_SUFFIX" == "NF" ]]; then
@@ -189,7 +269,8 @@ jobs:
           zip -r -j "$FUSION_ID-$NERD_SUFFIX-$NARROW_SUFFIX-HT.zip" "fused-fonts-HT/"
           zip -r -j "$FUSION_ID-$NERD_SUFFIX-$NARROW_SUFFIX-NHT.zip" "fused-fonts-NHT/"
 
-      - name: Release Fonts
+      - name: Release Release Fonts
+        if: ${{ env.MODE }} == 'Release'
         uses: softprops/action-gh-release@v2
         with:
           files: |
@@ -209,4 +290,27 @@ jobs:
           draft: false
           prerelease: false
           make_latest: true
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Release Commit Fonts
+        if: ${{ env.MODE }}  == 'Commit'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ${{ env.FUSION_ID }}-${{ env.NERD_SUFFIX }}-${{ env.NARROW_SUFFIX }}-HT.zip
+            ${{ env.FUSION_ID }}-${{ env.NERD_SUFFIX }}-${{ env.NARROW_SUFFIX }}-NHT.zip
+          tag_name: ${{ env.FUSION_VERSION }}
+          name: ${{ env.FUSION_VERSION }}
+          body: >
+            Fused with
+            [JetBrains Mono ${{ env.JETBRAINS_LATEST_HASH }}](${{ github.server_url }}/JetBrains/JetBrainsMono/commit/${{ env.JETBRAINS_LATEST_HASH }}) &
+            [Maple Mono ${{ env.MAPLE_LATEST_HASH }}](${{ github.server_url }}/subframe7536/maple-font/commit/${{ env.MAPLE_LATEST_HASH }})
+
+
+            Built with
+            [Github Workflow #${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          append-body: false
+          draft: false
+          prerelease: true
+          make_latest: false
           token: ${{ secrets.GH_TOKEN }}
