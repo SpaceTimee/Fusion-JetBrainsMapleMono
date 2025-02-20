@@ -145,7 +145,7 @@ jobs:
     name: Fuse Release Fonts
     runs-on: ubuntu-latest
     needs: check_release_updates
-    if: ${{ env.IS_RELEASE_UPDATED == 'true' }} || ${{ env.IS_COMMIT_UPDATED == 'true' }}
+    if: ${{ env.IS_RELEASE_UPDATED }} == 'true' || ${{ env.IS_COMMIT_UPDATED }} == 'true'
     strategy:
       fail-fast: false
       matrix:
