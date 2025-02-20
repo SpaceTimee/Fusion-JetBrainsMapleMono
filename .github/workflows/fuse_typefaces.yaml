@@ -145,7 +145,7 @@ jobs:
           git clone "$MAPLE_GIT_URL"
           cd "maple-font"
           pip install -r "requirements.txt"
-          python build.py --normal --liga --cn --hinted --ttf-only "$NERD_ARGS" "$NARROW_ARGS"
+          python build.py --normal --liga --cn --hinted --ttf-only "$NERD_ARGS" $NARROW_ARGS
           cd ".."
           mkdir -p "source-fonts/maple"
           if [[ "$NERD_SUFFIX" == "NF" ]]; then
