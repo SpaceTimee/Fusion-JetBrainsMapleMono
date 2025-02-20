@@ -193,8 +193,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            $FUSION_ID-$NERD_SUFFIX-$NARROW_SUFFIX-HT.zip
-            $FUSION_ID-$NERD_SUFFIX-$NARROW_SUFFIX-NHT.zip
+            ${{ env.FUSION_ID }}-${{ env.NERD_SUFFIX }}-${{ env.NARROW_SUFFIX }}-HT.zip
+            ${{ env.FUSION_ID }}-${{ env.NERD_SUFFIX }}-${{ env.NARROW_SUFFIX }}-NHT.zip
           tag_name: ${{ env.FUSION_VERSION }}
           name: ${{ env.FUSION_VERSION }}
           body: >
