@@ -199,8 +199,8 @@ jobs:
           name: ${{ env.FUSION_VERSION }}
           body: >
             Fused with
-            [JetBrains Mono $JETBRAINS_LATEST_VERSION](${{ github.server_url }}/JetBrains/JetBrainsMono/releases/tag/$JETBRAINS_LATEST_VERSION) &
-            [Maple Mono $MAPLE_LATEST_VERSION](${{ github.server_url }}/subframe7536/maple-font/releases/tag/$MAPLE_LATEST_VERSION)
+            [JetBrains Mono ${{ env.JETBRAINS_LATEST_VERSION }}](${{ github.server_url }}/JetBrains/JetBrainsMono/releases/tag/${{ env.JETBRAINS_LATEST_VERSION }}) &
+            [Maple Mono ${{ env.$MAPLE_LATEST_VERSION }}](${{ github.server_url }}/subframe7536/maple-font/releases/tag/${{ env.MAPLE_LATEST_VERSION }})
 
             ---
 
