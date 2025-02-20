@@ -160,10 +160,12 @@ jobs:
           mkdir -p "fused-fonts-NHT"
           for STYLE in "Thin" "ThinItalic" "ExtraLight" "ExtraLightItalic" "Light" "LightItalic" "Regular" "Italic" "Medium" "MediumItalic" "SemiBold" "SemiBoldItalic" "Bold" "BoldItalic" "ExtraBold" "ExtraBoldItalic"; do
             if [[ "$NERD_SUFFIX" == "NF" ]]; then
-              fonttools merge "source-fonts/maple/MapleMonoNormal-NF-CN-$STYLE.ttf" "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf" --output-file "fused-font-HT.ttf"
+              fonttools merge "source-fonts/maple/MapleMonoNormal-NF-CN-$STYLE.ttf" "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf"
             else
-              fonttools merge "source-fonts/maple/MapleMonoNormal-CN-$STYLE.ttf" "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf" --output-file "fused-font-HT.ttf"
+              fonttools merge "source-fonts/maple/MapleMonoNormal-CN-$STYLE.ttf" "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf"
             fi
+
+            mv "merged.ttf" "fused-font-HT.ttf"
 
             gftools rename-font "fused-font-HT.ttf" "$FUSION_NAME"
             gftools update-nameids "fused-font-HT.ttf" \
