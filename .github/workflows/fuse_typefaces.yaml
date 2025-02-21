@@ -157,12 +157,12 @@ jobs:
         NERD:
           - SUFFIX: NF
             ARGS: --nerd-font
-          - SUFFIX: NNF
+          - SUFFIX: XX
             ARGS: --no-nerd-font
         NARROW:
           - SUFFIX: NR
             ARGS: --cn-narrow
-          - SUFFIX: NNR
+          - SUFFIX: XX
             ARGS: ""
     env:
       JETBRAINS_LATEST_VERSION: ${{ needs.check_release_updates.outputs.JETBRAINS_LATEST_VERSION }}
