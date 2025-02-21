@@ -40,7 +40,7 @@ jobs:
       - name: Get Previous Run Id
         run: |
           PREV_RUN_ID="$(gh run list --workflow "$GITHUB_WORKFLOW" --limit 2 --json "databaseId" --jq ".[1].databaseId")"
-          echo "PREV_RUN_ID=$PREV_RUN_ID" >> "$GITHUB_ENV"
+          echo "PREV_RUN_ID="$PREV_RUN_ID"" >> "$GITHUB_ENV"
           echo "Previous Run Id: $PREV_RUN_ID"
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -63,8 +63,8 @@ jobs:
 
           if [[ "$JETBRAINS_PREV_VERSION" == "$JETBRAINS_LATEST_VERSION" || "$MAPLE_PREV_VERSION" != "$MAPLE_LATEST_VERSION" ]]; then
             echo "IS_RELEASE_UPDATED=true" >> "$GITHUB_OUTPUT"
-            echo "JETBRAINS_LATEST_VERSION=$JETBRAINS_LATEST_VERSION" >> "$GITHUB_OUTPUT"
-            echo "MAPLE_LATEST_VERSION=$MAPLE_LATEST_VERSION" >> "$GITHUB_OUTPUT"
+            echo "JETBRAINS_LATEST_VERSION="$JETBRAINS_LATEST_VERSION"" >> "$GITHUB_OUTPUT"
+            echo "MAPLE_LATEST_VERSION="$MAPLE_LATEST_VERSION"" >> "$GITHUB_OUTPUT"
             echo "$JETBRAINS_LATEST_VERSION" > "jetbrains_version.txt"
             echo "$MAPLE_LATEST_VERSION" > "maple_version.txt"
           else
@@ -99,7 +99,7 @@ jobs:
       - name: Get Previous Run Id
         run: |
           PREV_RUN_ID="$(gh run list --workflow "$GITHUB_WORKFLOW" --limit 2 --json "databaseId" --jq ".[1].databaseId")"
-          echo "PREV_RUN_ID=$PREV_RUN_ID" >> "$GITHUB_ENV"
+          echo "PREV_RUN_ID="$PREV_RUN_ID"" >> "$GITHUB_ENV"
           echo "Previous Run Id: $PREV_RUN_ID"
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -122,8 +122,8 @@ jobs:
 
           if [[ "$JETBRAINS_PREV_HASH" == "$JETBRAINS_LATEST_HASH" || "$MAPLE_PREV_HASH" != "$MAPLE_LATEST_HASH" ]]; then
             echo "IS_COMMIT_UPDATED=true" >> "$GITHUB_OUTPUT"
-            echo "JETBRAINS_LATEST_HASH=$JETBRAINS_LATEST_HASH" >> "$GITHUB_OUTPUT"
-            echo "MAPLE_LATEST_HASH=$MAPLE_LATEST_HASH" >> "$GITHUB_OUTPUT"
+            echo "JETBRAINS_LATEST_HASH="$JETBRAINS_LATEST_HASH"" >> "$GITHUB_OUTPUT"
+            echo "MAPLE_LATEST_HASH="$MAPLE_LATEST_HASH"" >> "$GITHUB_OUTPUT"
             echo "$JETBRAINS_LATEST_HASH" > "jetbrains_hash.txt"
             echo "$MAPLE_LATEST_HASH" > "maple_hash.txt"
           else
@@ -147,7 +147,7 @@ jobs:
     needs:
       - check_release_updates
       - check_commit_updates
-    if: ${{ needs.check_release_updates.outputs.IS_RELEASE_UPDATED == 'true' || needs.check_commit_updates.outputs.IS_COMMIT_UPDATED == 'true' }}
+    if: ${{ needs.check_release_updates.outputs.IS_RELEASE_UPDATED == "true" || needs.check_commit_updates.outputs.IS_COMMIT_UPDATED == "true" }}
     strategy:
       fail-fast: false
       matrix:
@@ -189,7 +189,7 @@ jobs:
             FUSION_VERSION="pre"
           fi
 
-          echo "FUSION_VERSION=$FUSION_VERSION" >> $GITHUB_ENV
+          echo "FUSION_VERSION="$FUSION_VERSION"" >> $GITHUB_ENV
           echo "Version: $FUSION_VERSION"
 
       - name: Setup Python
@@ -270,7 +270,7 @@ jobs:
           zip -r -j "$FUSION_ID-$NERD_SUFFIX-$NARROW_SUFFIX-XX.zip" "fused-fonts-XX/"
 
       - name: Release Release Fonts
-        if: ${{ env.MODE == 'Release' }}
+        if: ${{ env.MODE == "Release" }}
         uses: softprops/action-gh-release@v2
         with:
           files: |
@@ -293,7 +293,7 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
 
       - name: Release Commit Fonts
-        if: ${{ env.MODE == 'Commit' }}
+        if: ${{ env.MODE == "Commit" }}
         uses: softprops/action-gh-release@v2
         with:
           files: |
