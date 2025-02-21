@@ -39,8 +39,8 @@ jobs:
 
       - name: Get Current Time
         run: |
-          UTC_TIME="$(date -u '+%Y-%m-%d %H:%M:%S')"
-          BJT_TIME="$(TZ="Asia/Shanghai date" '+%Y-%m-%d %H:%M:%S')"
+          UTC_TIME="$(date -u +%Y-%m-%d %H:%M:%S')"
+          BJT_TIME="$(TZ="Asia/Shanghai date" +%Y-%m-%d %H:%M:%S)"
 
           echo "UTC_TIME="$UTC_TIME"" >> "$GITHUB_ENV"
           echo "BJT_TIME="$BJT_TIME"" >> "$GITHUB_ENV"
