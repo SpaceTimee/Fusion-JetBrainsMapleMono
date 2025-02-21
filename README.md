@@ -19,11 +19,13 @@
     3. 非汉字字母字符所在行前无汉字/字母，则使用后一个汉字/字母字形 ("0汉a" 的 0 为中文字形)
     4. 非汉字字母字符所在行前后均无汉字/字母，则使用英文字形 ("0" 为英文字形)
 
+![Font Showcase](https://github.com/user-attachments/assets/e3b061f2-1c81-4021-8d73-9ea9bb741084)
+
 ## 实时监测
 最近一次检查更新的时间:
 
-* 北京时间: <!--BJT_TIME-->2025-02-21 20:53:00<!--BJT_TIME-->
-* UTC 时间: <!--UTC_TIME-->2025-02-21 12:53:00<!--UTC_TIME-->
+* 北京时间: <!--BJT_TIME-->2025-02-21 22:23:48<!--BJT_TIME-->
+* UTC 时间: <!--UTC_TIME-->2025-02-21 14:23:48<!--UTC_TIME-->
 
 ## 下载地址
 1. **Github (latest): [https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono/releases/latest](https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono/releases/latest)**
