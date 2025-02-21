@@ -10,10 +10,10 @@ on:
 
 env:
   JETBRAINS_GIT_URL: ${{ github.server_url }}/JetBrains/JetBrainsMono.git
-  JETBRAINS_LATEST_RELEASE_API_URL: ${{ github.api_url }}/repos/JetBrains/JetBrainsMono/releases/latest
+  JETBRAINS_LATEST_Release_API_URL: ${{ github.api_url }}/repos/JetBrains/JetBrainsMono/releases/latest
   JETBRAINS_COPYRIGHT: Copyright 2020 The JetBrains Mono Project Authors (${{ github.server_url }}/JetBrains/JetBrainsMono)
   MAPLE_GIT_URL: ${{ github.server_url }}/subframe7536/maple-font.git
-  MAPLE_LATEST_RELEASE_API_URL: ${{ github.api_url }}/repos/subframe7536/maple-font/releases/latest
+  MAPLE_LATEST_Release_API_URL: ${{ github.api_url }}/repos/subframe7536/maple-font/releases/latest
   MAPLE_COPYRIGHT: Copyright 2022 The Maple Mono Project Authors (${{ github.server_url }}/subframe7536/maple-font)
   FUSION_NAME: JetBrains Maple Mono
   FUSION_ID: JetBrainsMapleMono
@@ -27,7 +27,7 @@ jobs:
     name: Check Release Updates
     runs-on: ubuntu-latest
     outputs:
-      IS_RELEASE_UPDATED: ${{ steps.check_release_updates.outputs.IS_RELEASE_UPDATED }}
+      IS_Release_UPDATED: ${{ steps.check_release_updates.outputs.IS_Release_UPDATED }}
       JETBRAINS_LATEST_VERSION: ${{ steps.check_release_updates.outputs.JETBRAINS_LATEST_VERSION }}
       MAPLE_LATEST_VERSION: ${{ steps.check_release_updates.outputs.MAPLE_LATEST_VERSION }}
 
@@ -58,17 +58,17 @@ jobs:
         run: |
           JETBRAINS_PREV_VERSION="$(cat "jetbrains_version.txt" 2> "/dev/null" || echo "")"
           MAPLE_PREV_VERSION="$(cat "maple_version.txt" 2> "/dev/null" || echo "")"
-          JETBRAINS_LATEST_VERSION="$(curl -s "$JETBRAINS_LATEST_RELEASE_API_URL" | jq -r ".tag_name")"
-          MAPLE_LATEST_VERSION="$(curl -s "$MAPLE_LATEST_RELEASE_API_URL" | jq -r ".tag_name")"
+          JETBRAINS_LATEST_VERSION="$(curl -s "$JETBRAINS_LATEST_Release_API_URL" | jq -r ".tag_name")"
+          MAPLE_LATEST_VERSION="$(curl -s "$MAPLE_LATEST_Release_API_URL" | jq -r ".tag_name")"
 
           if [[ "$JETBRAINS_PREV_VERSION" == "$JETBRAINS_LATEST_VERSION" || "$MAPLE_PREV_VERSION" != "$MAPLE_LATEST_VERSION" ]]; then
-            echo "IS_RELEASE_UPDATED=true" >> "$GITHUB_OUTPUT"
+            echo "IS_Release_UPDATED=true" >> "$GITHUB_OUTPUT"
             echo "JETBRAINS_LATEST_VERSION="$JETBRAINS_LATEST_VERSION"" >> "$GITHUB_OUTPUT"
             echo "MAPLE_LATEST_VERSION="$MAPLE_LATEST_VERSION"" >> "$GITHUB_OUTPUT"
             echo "$JETBRAINS_LATEST_VERSION" > "jetbrains_version.txt"
             echo "$MAPLE_LATEST_VERSION" > "maple_version.txt"
           else
-            echo "IS_RELEASE_UPDATED=false" >> "$GITHUB_OUTPUT"
+            echo "IS_Release_UPDATED=false" >> "$GITHUB_OUTPUT"
           fi
 
           echo "Previous JetBrains Version: $JETBRAINS_PREV_VERSION"
@@ -147,7 +147,7 @@ jobs:
     needs:
       - check_release_updates
       - check_commit_updates
-    if: ${{ needs.check_release_updates.outputs.IS_RELEASE_UPDATED == 'true' || needs.check_commit_updates.outputs.IS_COMMIT_UPDATED == 'true' }}
+    if: ${{ needs.check_release_updates.outputs.IS_Release_UPDATED == 'true' || needs.check_commit_updates.outputs.IS_COMMIT_UPDATED == 'true' }}
     strategy:
       fail-fast: false
       matrix:
@@ -183,7 +183,7 @@ jobs:
 
       - name: Generate Version
         run: |
-          if [[ "$MODE" == "RELEASE" ]]; then
+          if [[ "$MODE" == "Release" ]]; then
             FUSION_VERSION="1.$(tr -d "." <<< "${JETBRAINS_LATEST_VERSION//v/}").$(tr -d "." <<< "${MAPLE_LATEST_VERSION//v/}")"
           else
             FUSION_VERSION="pre"
@@ -203,7 +203,7 @@ jobs:
 
       - name: Build JetBrains
         run: |
-          if [[ "$MODE" == "RELEASE" ]]; then
+          if [[ "$MODE" == "Release" ]]; then
             git clone --branch "$JETBRAINS_LATEST_VERSION" --single-branch "$JETBRAINS_GIT_URL"
           else
             git clone --depth 1 "$JETBRAINS_GIT_URL"
@@ -217,7 +217,7 @@ jobs:
 
       - name: Build Maple
         run: |
-          if [[ "$MODE" == "RELEASE" ]]; then
+          if [[ "$MODE" == "Release" ]]; then
             git clone --branch "$MAPLE_LATEST_VERSION" --single-branch "$MAPLE_GIT_URL"
           else
             git clone --depth 1 "$MAPLE_GIT_URL"
