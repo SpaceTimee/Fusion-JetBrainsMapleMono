@@ -1,4 +1,4 @@
-name: Fuse Typefaces
+name: Fuse Fonts
 
 on:
   schedule:
@@ -17,8 +17,9 @@ env:
   MAPLE_COPYRIGHT: Copyright 2022 The Maple Mono Project Authors (${{ github.server_url }}/subframe7536/maple-font)
   FUSION_NAME: JetBrains Maple Mono
   FUSION_ID: JetBrainsMapleMono
-  FUSION_DESCRIPTION: The free and open-source typeface fused with JetBrains Mono & Maple Mono
+  FUSION_DESCRIPTION: The free and open-source font fused with JetBrains Mono & Maple Mono
   FUSION_DEVELOPER: Space Time
+  FUSION_URL: ${{ github.server_url }}/${{ github.repository }}
   FUSION_COPYRIGHT: Copyright 2025 Space Time (${{ github.server_url }}/${{ github.repository }})
   FUSION_LICENSE: "This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://openfontlicense.org"
 
@@ -279,6 +280,9 @@ jobs:
           tag_name: ${{ env.FUSION_VERSION }}
           name: ${{ env.FUSION_VERSION }}
           body: >
+            [下载哪个?](${{ env.FUSION_URL }}?tab=readme-ov-file#下载哪个)
+
+
             Fused with
             [JetBrains Mono ${{ env.JETBRAINS_LATEST_VERSION }}](${{ github.server_url }}/JetBrains/JetBrainsMono/releases/tag/${{ env.JETBRAINS_LATEST_VERSION }}) &
             [Maple Mono ${{ env.MAPLE_LATEST_VERSION }}](${{ github.server_url }}/subframe7536/maple-font/releases/tag/${{ env.MAPLE_LATEST_VERSION }})
@@ -301,6 +305,9 @@ jobs:
           tag_name: ${{ env.FUSION_VERSION }}
           name: ${{ env.FUSION_VERSION }}
           body: >
+            [下载哪个?](${{ env.FUSION_URL }}?tab=readme-ov-file#下载哪个)
+
+
             Fused with
             [JetBrains Mono ${{ env.JETBRAINS_LATEST_HASH }}](${{ github.server_url }}/JetBrains/JetBrainsMono/commit/${{ env.JETBRAINS_LATEST_HASH }}) &
             [Maple Mono ${{ env.MAPLE_LATEST_HASH }}](${{ github.server_url }}/subframe7536/maple-font/commit/${{ env.MAPLE_LATEST_HASH }})
