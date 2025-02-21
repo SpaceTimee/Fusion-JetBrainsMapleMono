@@ -29,7 +29,7 @@
 ## 脚本流程
 1. 每 5 分钟自动向上游 JetBrains Mono & Maple Mono 存储库检查 Release 和 Commit 更新
 2. 如有更新则构建、合成字体，并修改元数据
-3. 如构建、合成成功则发布字体 (Release 发布为 latest，Commit 发布在 preview)
+3. 如构建、合成成功则将字体发布到 Github Release (Release 发布为 latest，Commit 发布在 preview)
 
 ## 致谢名单
 * **JetBrains Mono: 为本项目提供所有非中文字体设计**
