@@ -117,8 +117,8 @@ jobs:
         run: |
           JETBRAINS_PREV_HASH="$(cat "jetbrains_hash.txt" 2> "/dev/null" || echo "")"
           MAPLE_PREV_HASH="$(cat "maple_hash.txt" 2> "/dev/null" || echo "")"
-          JETBRAINS_LATEST_HASH="${(git ls-remote --heads "$JETBRAINS_GIT_URL" "master" | cut "-f1"):0:7}"
-          MAPLE_LATEST_HASH="${(git ls-remote --heads "$MAPLE_GIT_URL" "variable" | cut "-f1"):0:7}"
+          JETBRAINS_LATEST_HASH="$(git ls-remote --heads "$JETBRAINS_GIT_URL" "master" | cut "-c1-7")"
+          MAPLE_LATEST_HASH="$(git ls-remote --heads "$MAPLE_GIT_URL" "variable" | cut "-c1-7")"
 
           if [[ "$JETBRAINS_PREV_HASH" == "$JETBRAINS_LATEST_HASH" || "$MAPLE_PREV_HASH" != "$MAPLE_LATEST_HASH" ]]; then
             echo "IS_COMMIT_UPDATED=true" >> "$GITHUB_OUTPUT"
