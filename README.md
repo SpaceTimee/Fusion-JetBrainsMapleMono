@@ -17,7 +17,7 @@
 2. Github (preview): [https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono/releases/tag/pre](https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono/releases/tag/pre)
 
 ## 下载哪个
-发布文件按 JetBrainsMapleMono-[NF/XX]-[NR/XX]-[HT/XX].zip 的格式命名:
+发布文件按 **JetBrainsMapleMono-[NF/XX]-[NR/XX]-[HT/XX].zip** 的格式命名:
 
 1. XX: 占位符，表示该字体没有增加这一特性
 2. NF: Nerd Font，为部分开发工具、命令行终端、代码编辑器等提供图标支持 (会导致字体文件体积略微增大)
