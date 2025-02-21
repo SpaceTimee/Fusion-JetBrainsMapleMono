@@ -104,11 +104,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
-      - name: Download Previous Hashs
+      - name: Download Previous Hashes
         continue-on-error: true
         uses: actions/download-artifact@v4
         with:
-          name: Hashs
+          name: Hashes
           run-id: ${{ env.PREV_RUN_ID }}
           github-token: ${{ secrets.GH_TOKEN }}
 
@@ -144,7 +144,9 @@ jobs:
   fuse_release_fonts:
     name: Fuse Release Fonts
     runs-on: ubuntu-latest
-    needs: check_release_updates
+    needs:
+      - check_release_updates
+      - check_commit_updates
     if: ${{ needs.check_release_updates.outputs.IS_RELEASE_UPDATED == 'true' || needs.check_commit_updates.outputs.IS_COMMIT_UPDATED == 'true' }}
     strategy:
       fail-fast: false
