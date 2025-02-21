@@ -37,7 +37,7 @@
 3. NR: CN Narrow，实验性功能，缩小中文字体间距 (会导致中英文不再 2:1 宽完美对齐)
 4. HT: Hinted，使字体在低分辨率屏幕上 (<=1080P) 的渲染更加均匀 (可能会导致字体在高分辨率屏幕上的渲染略微模糊)
 
-> 如果依然不清楚如何选择则下载 **JetBrainsMapleMono-XX-XX-XX.zip**
+> 如果依然不清楚如何选择请下载 **JetBrainsMapleMono-XX-XX-XX.zip**
 
 ## 脚本流程
 1. 每 5 - 15 分钟自动向上游 JetBrains Mono & Maple Mono 存储库**检查 Release 和 Commit 更新**
