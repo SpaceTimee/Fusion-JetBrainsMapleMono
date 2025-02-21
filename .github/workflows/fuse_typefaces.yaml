@@ -142,7 +142,7 @@ jobs:
           path: "*_hash.txt"
 
   fuse_fonts:
-    name: Fuse Release Fonts
+    name: Fuse Fonts
     runs-on: ubuntu-latest
     needs:
       - check_release_updates
