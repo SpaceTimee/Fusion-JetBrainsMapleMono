@@ -117,8 +117,8 @@ jobs:
         run: |
           JETBRAINS_PREV_HASH="$(cat "jetbrains_hash.txt" 2> "/dev/null" || echo "")"
           MAPLE_PREV_HASH="$(cat "maple_hash.txt" 2> "/dev/null" || echo "")"
-          JETBRAINS_LATEST_HASH="$(git ls-remote --heads "$JETBRAINS_GIT_URL" "master" | cut "-f1")"
-          MAPLE_LATEST_HASH="$(git ls-remote --heads "$MAPLE_GIT_URL" "variable" | cut "-f1")"
+          JETBRAINS_LATEST_HASH="${(git ls-remote --heads "$JETBRAINS_GIT_URL" "master" | cut "-f1"):0:7}"
+          MAPLE_LATEST_HASH="${(git ls-remote --heads "$MAPLE_GIT_URL" "variable" | cut "-f1"):0:7}"
 
           if [[ "$JETBRAINS_PREV_HASH" == "$JETBRAINS_LATEST_HASH" || "$MAPLE_PREV_HASH" != "$MAPLE_LATEST_HASH" ]]; then
             echo "IS_COMMIT_UPDATED=true" >> "$GITHUB_OUTPUT"
@@ -280,8 +280,8 @@ jobs:
           name: ${{ env.FUSION_VERSION }}
           body: >
             Fused with
-            [JetBrains Mono ${{ env.JETBRAINS_LATEST_VERSION:0:7 }}](${{ github.server_url }}/JetBrains/JetBrainsMono/releases/tag/${{ env.JETBRAINS_LATEST_VERSION }}) &
-            [Maple Mono ${{ env.MAPLE_LATEST_VERSION:0:7 }}](${{ github.server_url }}/subframe7536/maple-font/releases/tag/${{ env.MAPLE_LATEST_VERSION }})
+            [JetBrains Mono ${{ env.JETBRAINS_LATEST_VERSION }}](${{ github.server_url }}/JetBrains/JetBrainsMono/releases/tag/${{ env.JETBRAINS_LATEST_VERSION }}) &
+            [Maple Mono ${{ env.MAPLE_LATEST_VERSION }}](${{ github.server_url }}/subframe7536/maple-font/releases/tag/${{ env.MAPLE_LATEST_VERSION }})
 
 
             Built with
