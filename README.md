@@ -12,6 +12,12 @@
 2. 丰富字重，智能连字，Nerd Font，Hints 原生支持
 3. 实时更新，构建合成发布全流程自动化
 
+## 实时监测
+最近一次检查更新的时间:
+
+* 北京时间: <!--BJT_TIME-->?<!--BJT_TIME-->
+* UTC 时间: <!--UTC_TIME-->?<!--UTC_TIME-->
+
 ## 下载地址
 1. **Github (latest): [https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono/releases/latest](https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono/releases/latest)**
 2. Github (preview): [https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono/releases/tag/pre](https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono/releases/tag/pre)
@@ -24,12 +30,12 @@
 3. NR: CN Narrow，实验性功能，缩小中文字体间距 (会导致中英文不再 2:1 宽完美对齐)
 4. HT: Hinted，使字体在低分辨率屏幕上 (<=1080P) 的渲染更加均匀 (可能会导致字体在高分辨率屏幕上的渲染略微模糊)
 
-> 如果依然不清楚如何选择则下载 JetBrainsMapleMono-XX-XX-XX.zip
+> 如果依然不清楚如何选择则下载 **JetBrainsMapleMono-XX-XX-XX.zip**
 
 ## 脚本流程
-1. 每 5 分钟自动向上游 JetBrains Mono & Maple Mono 存储库检查 Release 和 Commit 更新
-2. 如有更新则构建、合成字体，并修改元数据
-3. 如构建、合成成功则将字体发布到 Github Release (Release 发布为 latest，Commit 发布在 preview)
+1. 每 5 分钟自动向上游 JetBrains Mono & Maple Mono 存储库**检查 Release 和 Commit 更新**
+2. 如有更新则**构建、合成字体，并修改元数据**
+3. 如构建、合成成功则**将字体发布到 Github Release** (Release 发布为 latest，Commit 发布在 preview)
 
 ## 致谢名单
 * **JetBrains Mono: 为本项目提供所有非中文字体设计**

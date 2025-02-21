@@ -24,6 +24,41 @@ env:
   FUSION_LICENSE: "This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://openfontlicense.org"
 
 jobs:
+  update-run-time:
+    name: Update Run Time
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+      - name: Fetch Git Folder & Readme
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .git
+            README.md
+
+      - name: Get Current Time
+        run: |
+          UTC_TIME="$(date -u "+%Y-%m-%d %H:%M:%S")"
+          BJT_TIME="$(TZ="Asia/Shanghai date" "+%Y-%m-%d %H:%M:%S")"
+
+          echo "UTC_TIME="$UTC_TIME"" >> "$GITHUB_ENV"
+          echo "BJT_TIME="$BJT_TIME"" >> "$GITHUB_ENV"
+          echo "UTC Time: $UTC_TIME"
+          echo "BJT Time: $BJT_TIME"
+
+      - name: Update Readme
+        run: |
+          sed -i "s|\(<!--UTC_TIME-->\).*\(<!--UTC_TIME-->\)|\1$UTC_TIME\2|g" "README.md"
+          sed -i "s|\(<!--BJT_TIME-->\).*\(<!--BJT_TIME-->\)|\1$BJT_TIME\2|g" "README.md"
+
+      - name: Commit Changes
+        run: |
+          git pull --rebase "origin" "main"
+          git add "README.md"
+          git commit -m "Update Run Time: $UTC_TIME"
+          git push
+
   check_release_updates:
     name: Check Release Updates
     runs-on: ubuntu-latest
