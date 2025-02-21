@@ -12,12 +12,7 @@
 * 丰富字重，智能连字，Nerd Font，Hints 原生支持
 * 实时更新，构建合成发布全流程自动化
 * JetBrains Mono (英文字形) + Maple Mono (中文字形) 双字形
-* 中英文字形由前后文自动选择，选择逻辑:
-
-    1. 汉字永远使用中文字形，字母永远使用英文字形，非汉字/字母字形由所在行前后字符决定 ("汉" 为中文字形，"a" 为英文字形)
-    2. 非汉字字母字符所在行前有汉字/字母，则使用前一个汉字/字母字形 ("汉a0" 的 0 为英文字形，"a汉0a" 的 0 为中文字形)
-    3. 非汉字字母字符所在行前无汉字/字母，则使用后一个汉字/字母字形 ("0汉a" 的 0 为中文字形)
-    4. 非汉字字母字符所在行前后均无汉字/字母，则使用英文字形 ("0" 为英文字形)
+* 中英文字形由前后文自动选择，选择规则可参考 [Fusion JetBrainsMapleMono Glyph](https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono/wiki/Fusion-JetBrainsMapleMono-Glyph)
 
 ![Font Showcase](https://github.com/user-attachments/assets/e3b061f2-1c81-4021-8d73-9ea9bb741084)
 
