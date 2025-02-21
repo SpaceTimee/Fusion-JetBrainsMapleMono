@@ -317,9 +317,6 @@ jobs:
           tag_name: ${{ env.FUSION_VERSION }}
           name: ${{ env.FUSION_VERSION }}
           body: >
-            [下载哪个?](${{ env.FUSION_URL }}?tab=readme-ov-file#下载哪个)
-
-
             Fused with
             [JetBrains Mono ${{ env.JETBRAINS_LATEST_VERSION }}](${{ github.server_url }}/JetBrains/JetBrainsMono/releases/tag/${{ env.JETBRAINS_LATEST_VERSION }}) &
             [Maple Mono ${{ env.MAPLE_LATEST_VERSION }}](${{ github.server_url }}/subframe7536/maple-font/releases/tag/${{ env.MAPLE_LATEST_VERSION }})
@@ -327,6 +324,9 @@ jobs:
 
             Built with
             [Github Workflow #${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+
+            [不知道下载哪个?](${{ env.FUSION_URL }}?tab=readme-ov-file#下载哪个)
           draft: false
           prerelease: false
           make_latest: true
@@ -342,9 +342,6 @@ jobs:
           tag_name: ${{ env.FUSION_VERSION }}
           name: ${{ env.FUSION_VERSION }}
           body: >
-            [下载哪个?](${{ env.FUSION_URL }}?tab=readme-ov-file#下载哪个)
-
-
             Fused with
             [JetBrains Mono ${{ env.JETBRAINS_LATEST_HASH }}](${{ github.server_url }}/JetBrains/JetBrainsMono/commit/${{ env.JETBRAINS_LATEST_HASH }}) &
             [Maple Mono ${{ env.MAPLE_LATEST_HASH }}](${{ github.server_url }}/subframe7536/maple-font/commit/${{ env.MAPLE_LATEST_HASH }})
@@ -352,6 +349,9 @@ jobs:
 
             Built with
             [Github Workflow #${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+
+            [不知道下载哪个?](${{ env.FUSION_URL }}?tab=readme-ov-file#下载哪个)
           draft: false
           prerelease: true
           make_latest: false
