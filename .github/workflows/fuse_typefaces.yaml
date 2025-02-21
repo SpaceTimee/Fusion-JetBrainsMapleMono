@@ -147,7 +147,7 @@ jobs:
     needs:
       - check_release_updates
       - check_commit_updates
-    if: ${{ needs.check_release_updates.outputs.IS_RELEASE_UPDATED == "true" || needs.check_commit_updates.outputs.IS_COMMIT_UPDATED == "true" }}
+    if: ${{ needs.check_release_updates.outputs.IS_RELEASE_UPDATED == 'true' || needs.check_commit_updates.outputs.IS_COMMIT_UPDATED == 'true' }}
     strategy:
       fail-fast: false
       matrix:
@@ -270,7 +270,7 @@ jobs:
           zip -r -j "$FUSION_ID-$NERD_SUFFIX-$NARROW_SUFFIX-XX.zip" "fused-fonts-XX/"
 
       - name: Release Release Fonts
-        if: ${{ env.MODE == "Release" }}
+        if: ${{ env.MODE == 'Release' }}
         uses: softprops/action-gh-release@v2
         with:
           files: |
@@ -293,7 +293,7 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
 
       - name: Release Commit Fonts
-        if: ${{ env.MODE == "Commit" }}
+        if: ${{ env.MODE == 'Commit' }}
         uses: softprops/action-gh-release@v2
         with:
           files: |
