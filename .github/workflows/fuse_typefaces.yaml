@@ -299,7 +299,7 @@ jobs:
               --designer "$FUSION_DEVELOPER" \
               --manufacturer "$FUSION_DEVELOPER" \
               --version "$FUSION_VERSION" \
-              --copyright "$JETBRAINS_COPYRIGHT$'\n'$MAPLE_COPYRIGHT$'\n'$FUSION_COPYRIGHT" \
+              --copyright "$(echo -e "$JETBRAINS_COPYRIGHT\n$MAPLE_COPYRIGHT\n$FUSION_COPYRIGHT")" \
               --license "$FUSION_LICENSE"
             gftools drop-hints "fused-font-HT.ttf.fix" "fused-font-XX.ttf.fix"
 
