@@ -99,7 +99,7 @@ jobs:
           JETBRAINS_LATEST_VERSION="$(curl -s "$JETBRAINS_LATEST_Release_API_URL" | jq -r ".tag_name")"
           MAPLE_LATEST_VERSION="$(curl -s "$MAPLE_LATEST_Release_API_URL" | jq -r ".tag_name")"
 
-          if [[ "$JETBRAINS_PREV_VERSION" == "$JETBRAINS_LATEST_VERSION" || "$MAPLE_PREV_VERSION" != "$MAPLE_LATEST_VERSION" ]]; then
+          if [[ "$JETBRAINS_PREV_VERSION" != "$JETBRAINS_LATEST_VERSION" || "$MAPLE_PREV_VERSION" != "$MAPLE_LATEST_VERSION" ]]; then
             echo "IS_Release_UPDATED=true" >> "$GITHUB_OUTPUT"
             echo "JETBRAINS_LATEST_VERSION="$JETBRAINS_LATEST_VERSION"" >> "$GITHUB_OUTPUT"
             echo "MAPLE_LATEST_VERSION="$MAPLE_LATEST_VERSION"" >> "$GITHUB_OUTPUT"
@@ -158,7 +158,7 @@ jobs:
           JETBRAINS_LATEST_HASH="$(git ls-remote --heads "$JETBRAINS_GIT_URL" "master" | cut "-c1-7")"
           MAPLE_LATEST_HASH="$(git ls-remote --heads "$MAPLE_GIT_URL" "variable" | cut "-c1-7")"
 
-          if [[ "$JETBRAINS_PREV_HASH" == "$JETBRAINS_LATEST_HASH" || "$MAPLE_PREV_HASH" != "$MAPLE_LATEST_HASH" ]]; then
+          if [[ "$JETBRAINS_PREV_HASH" != "$JETBRAINS_LATEST_HASH" || "$MAPLE_PREV_HASH" != "$MAPLE_LATEST_HASH" ]]; then
             echo "IS_COMMIT_UPDATED=true" >> "$GITHUB_OUTPUT"
             echo "JETBRAINS_LATEST_HASH="$JETBRAINS_LATEST_HASH"" >> "$GITHUB_OUTPUT"
             echo "MAPLE_LATEST_HASH="$MAPLE_LATEST_HASH"" >> "$GITHUB_OUTPUT"
