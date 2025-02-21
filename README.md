@@ -15,8 +15,8 @@
 ## 实时监测
 最近一次检查更新的时间:
 
-* 北京时间: <!--BJT_TIME-->?<!--BJT_TIME-->
-* UTC 时间: <!--UTC_TIME-->?<!--UTC_TIME-->
+* 北京时间: <!--BJT_TIME-->$(TZ="Asia/Shanghai date" "+%Y-%m-%d %H:%M:%S")<!--BJT_TIME-->
+* UTC 时间: <!--UTC_TIME-->$(date -u "+%Y-%m-%d %H:%M:%S")<!--UTC_TIME-->
 
 ## 下载地址
 1. **Github (latest): [https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono/releases/latest](https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono/releases/latest)**
