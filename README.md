@@ -16,12 +16,6 @@
 
 ![Font Showcase](https://github.com/user-attachments/assets/e3b061f2-1c81-4021-8d73-9ea9bb741084)
 
-## 实时监测
-最近一次检查更新的时间:
-
-* 北京时间: <!--BJT_TIME-->2025-02-21 22:41:50<!--BJT_TIME-->
-* UTC 时间: <!--UTC_TIME-->2025-02-21 14:41:50<!--UTC_TIME-->
-
 ## 下载地址
 1. **Github (latest): [https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono/releases/latest](https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono/releases/latest)**
 2. Github (preview): [https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono/releases/tag/pre](https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono/releases/tag/pre)
@@ -42,6 +36,12 @@
 3. 如构建、合成成功则**将字体发布到 Github Release** (Release 发布为 latest，Commit 发布在 preview)
 
 > 可手动选择跳过检查更新强制合成字体
+
+## 实时监测
+最近一次检查更新的时间:
+
+* 北京时间: <!--BJT_TIME-->2025-02-21 22:41:50<!--BJT_TIME-->
+* UTC 时间: <!--UTC_TIME-->2025-02-21 14:41:50<!--UTC_TIME-->
 
 ## 致谢名单
 * **JetBrains Mono: 为本项目提供所有非中文字体设计**
