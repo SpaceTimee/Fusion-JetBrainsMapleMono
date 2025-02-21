@@ -7,8 +7,15 @@ on:
     branches:
       - "**"
   workflow_dispatch:
+    inputs:
+      FORCE:
+        description: Skip checking updates and force to fuse fonts
+        type: boolean
+        default: false
+        required: false
 
 env:
+  FORCE: ${{ github.event.inputs.FORCE }}
   JETBRAINS_GIT_URL: ${{ github.server_url }}/JetBrains/JetBrainsMono.git
   JETBRAINS_LATEST_Release_API_URL: ${{ github.api_url }}/repos/JetBrains/JetBrainsMono/releases/latest
   JETBRAINS_COPYRIGHT: Copyright 2020 The JetBrains Mono Project Authors (${{ github.server_url }}/JetBrains/JetBrainsMono)
@@ -65,7 +72,7 @@ jobs:
     name: Check Release Updates
     runs-on: ubuntu-latest
     outputs:
-      IS_Release_UPDATED: ${{ steps.check_release_updates.outputs.IS_Release_UPDATED }}
+      IS_RELEASE_UPDATED: ${{ steps.check_release_updates.outputs.IS_RELEASE_UPDATED }}
       JETBRAINS_LATEST_VERSION: ${{ steps.check_release_updates.outputs.JETBRAINS_LATEST_VERSION }}
       MAPLE_LATEST_VERSION: ${{ steps.check_release_updates.outputs.MAPLE_LATEST_VERSION }}
 
@@ -99,14 +106,14 @@ jobs:
           JETBRAINS_LATEST_VERSION="$(curl -s "$JETBRAINS_LATEST_Release_API_URL" | jq -r ".tag_name")"
           MAPLE_LATEST_VERSION="$(curl -s "$MAPLE_LATEST_Release_API_URL" | jq -r ".tag_name")"
 
-          if [[ "$JETBRAINS_PREV_VERSION" != "$JETBRAINS_LATEST_VERSION" || "$MAPLE_PREV_VERSION" != "$MAPLE_LATEST_VERSION" ]]; then
-            echo "IS_Release_UPDATED=true" >> "$GITHUB_OUTPUT"
+          if [[ "$FORCE" == "true" || "$JETBRAINS_PREV_VERSION" != "$JETBRAINS_LATEST_VERSION" || "$MAPLE_PREV_VERSION" != "$MAPLE_LATEST_VERSION" ]]; then
+            echo "IS_RELEASE_UPDATED=true" >> "$GITHUB_OUTPUT"
             echo "JETBRAINS_LATEST_VERSION="$JETBRAINS_LATEST_VERSION"" >> "$GITHUB_OUTPUT"
             echo "MAPLE_LATEST_VERSION="$MAPLE_LATEST_VERSION"" >> "$GITHUB_OUTPUT"
             echo "$JETBRAINS_LATEST_VERSION" > "jetbrains_version.txt"
             echo "$MAPLE_LATEST_VERSION" > "maple_version.txt"
           else
-            echo "IS_Release_UPDATED=false" >> "$GITHUB_OUTPUT"
+            echo "IS_RELEASE_UPDATED=false" >> "$GITHUB_OUTPUT"
           fi
 
           echo "Previous JetBrains Version: $JETBRAINS_PREV_VERSION"
@@ -158,7 +165,7 @@ jobs:
           JETBRAINS_LATEST_HASH="$(git ls-remote --heads "$JETBRAINS_GIT_URL" "master" | cut "-c1-7")"
           MAPLE_LATEST_HASH="$(git ls-remote --heads "$MAPLE_GIT_URL" "variable" | cut "-c1-7")"
 
-          if [[ "$JETBRAINS_PREV_HASH" != "$JETBRAINS_LATEST_HASH" || "$MAPLE_PREV_HASH" != "$MAPLE_LATEST_HASH" ]]; then
+          if [[ "$FORCE" == "true" || "$JETBRAINS_PREV_HASH" != "$JETBRAINS_LATEST_HASH" || "$MAPLE_PREV_HASH" != "$MAPLE_LATEST_HASH" ]]; then
             echo "IS_COMMIT_UPDATED=true" >> "$GITHUB_OUTPUT"
             echo "JETBRAINS_LATEST_HASH="$JETBRAINS_LATEST_HASH"" >> "$GITHUB_OUTPUT"
             echo "MAPLE_LATEST_HASH="$MAPLE_LATEST_HASH"" >> "$GITHUB_OUTPUT"
@@ -185,7 +192,7 @@ jobs:
     needs:
       - check_release_updates
       - check_commit_updates
-    if: ${{ needs.check_release_updates.outputs.IS_Release_UPDATED == 'true' || needs.check_commit_updates.outputs.IS_COMMIT_UPDATED == 'true' }}
+    if: ${{ needs.check_release_updates.outputs.IS_RELEASE_UPDATED == 'true' || needs.check_commit_updates.outputs.IS_COMMIT_UPDATED == 'true' }}
     strategy:
       fail-fast: false
       matrix:
@@ -292,7 +299,7 @@ jobs:
               --designer "$FUSION_DEVELOPER" \
               --manufacturer "$FUSION_DEVELOPER" \
               --version "$FUSION_VERSION" \
-              --copyright "$JETBRAINS_COPYRIGHT\n$MAPLE_COPYRIGHT\n$FUSION_COPYRIGHT" \
+              --copyright "$JETBRAINS_COPYRIGHT$'\n'$MAPLE_COPYRIGHT$'\n'$FUSION_COPYRIGHT" \
               --license "$FUSION_LICENSE"
             gftools drop-hints "fused-font-HT.ttf.fix" "fused-font-XX.ttf.fix"
 
