@@ -286,7 +286,6 @@ jobs:
 
             Built with
             [Github Workflow #${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-          append-body: false
           draft: false
           prerelease: false
           make_latest: true
@@ -309,7 +308,6 @@ jobs:
 
             Built with
             [Github Workflow #${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-          append-body: false
           draft: false
           prerelease: true
           make_latest: false
