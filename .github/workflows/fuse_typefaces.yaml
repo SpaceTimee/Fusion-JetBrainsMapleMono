@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       FORCE:
-        description: Skip checking updates and force to fuse fonts
+        description: Skip checking updates & Force to fuse
         type: boolean
         default: false
         required: false
