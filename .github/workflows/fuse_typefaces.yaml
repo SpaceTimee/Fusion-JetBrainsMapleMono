@@ -163,8 +163,6 @@ jobs:
           - SUFFIX: NNR
             ARGS: ""
     env:
-      # IS_RELEASE_UPDATED: ${{ needs.check_release_updates.outputs.IS_RELEASE_UPDATED }}
-      # IS_COMMIT_UPDATED: ${{ needs.check_commit_updates.outputs.IS_COMMIT_UPDATED }}
       JETBRAINS_LATEST_VERSION: ${{ needs.check_release_updates.outputs.JETBRAINS_LATEST_VERSION }}
       JETBRAINS_LATEST_HASH: ${{ needs.check_commit_updates.outputs.JETBRAINS_LATEST_HASH }}
       MAPLE_LATEST_VERSION: ${{ needs.check_release_updates.outputs.MAPLE_LATEST_VERSION }}
@@ -270,7 +268,7 @@ jobs:
           zip -r -j "$FUSION_ID-$NERD_SUFFIX-$NARROW_SUFFIX-NHT.zip" "fused-fonts-NHT/"
 
       - name: Release Release Fonts
-        if: ${{ matrix.MODE == 'Release' }}
+        if: ${{ env.MODE == 'Release' }}
         uses: softprops/action-gh-release@v2
         with:
           files: |
@@ -293,7 +291,7 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
 
       - name: Release Commit Fonts
-        if: ${{ matrix.MODE == 'Commit' }}
+        if: ${{ env.MODE == 'Commit' }}
         uses: softprops/action-gh-release@v2
         with:
           files: |
