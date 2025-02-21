@@ -237,7 +237,7 @@ jobs:
       - name: Fuse Fonts
         run: |
           mkdir -p "fused-fonts-HT"
-          mkdir -p "fused-fonts-NHT"
+          mkdir -p "fused-fonts-XX"
           for STYLE in "Thin" "ThinItalic" "ExtraLight" "ExtraLightItalic" "Light" "LightItalic" "Regular" "Italic" "Medium" "MediumItalic" "SemiBold" "SemiBoldItalic" "Bold" "BoldItalic" "ExtraBold" "ExtraBoldItalic"; do
             if [[ "$NERD_SUFFIX" == "NF" ]]; then
               fonttools merge "source-fonts/maple/MapleMonoNormal-NF-CN-$STYLE.ttf" "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf"
@@ -256,18 +256,18 @@ jobs:
               --version "$FUSION_VERSION" \
               --copyright "$JETBRAINS_COPYRIGHT\n$MAPLE_COPYRIGHT\n$FUSION_COPYRIGHT" \
               --license "$FUSION_LICENSE"
-            gftools drop-hints "fused-font-HT.ttf.fix" "fused-font-NHT.ttf.fix"
+            gftools drop-hints "fused-font-HT.ttf.fix" "fused-font-XX.ttf.fix"
 
             mv "fused-font-HT.ttf.fix" "fused-fonts-HT/$FUSION_ID-$STYLE.ttf"
-            mv "fused-font-NHT.ttf.fix" "fused-fonts-NHT/$FUSION_ID-$STYLE.ttf"
+            mv "fused-font-XX.ttf.fix" "fused-fonts-XX/$FUSION_ID-$STYLE.ttf"
             cp "OFL.txt" "fused-fonts-HT/LICENSE.txt"
-            cp "OFL.txt" "fused-fonts-NHT/LICENSE.txt"
+            cp "OFL.txt" "fused-fonts-XX/LICENSE.txt"
           done
 
       - name: Zip Fonts
         run: |
           zip -r -j "$FUSION_ID-$NERD_SUFFIX-$NARROW_SUFFIX-HT.zip" "fused-fonts-HT/"
-          zip -r -j "$FUSION_ID-$NERD_SUFFIX-$NARROW_SUFFIX-NHT.zip" "fused-fonts-NHT/"
+          zip -r -j "$FUSION_ID-$NERD_SUFFIX-$NARROW_SUFFIX-XX.zip" "fused-fonts-XX/"
 
       - name: Release Release Fonts
         if: ${{ env.MODE == 'Release' }}
@@ -275,7 +275,7 @@ jobs:
         with:
           files: |
             ${{ env.FUSION_ID }}-${{ env.NERD_SUFFIX }}-${{ env.NARROW_SUFFIX }}-HT.zip
-            ${{ env.FUSION_ID }}-${{ env.NERD_SUFFIX }}-${{ env.NARROW_SUFFIX }}-NHT.zip
+            ${{ env.FUSION_ID }}-${{ env.NERD_SUFFIX }}-${{ env.NARROW_SUFFIX }}-XX.zip
           tag_name: ${{ env.FUSION_VERSION }}
           name: ${{ env.FUSION_VERSION }}
           body: >
@@ -298,7 +298,7 @@ jobs:
         with:
           files: |
             ${{ env.FUSION_ID }}-${{ env.NERD_SUFFIX }}-${{ env.NARROW_SUFFIX }}-HT.zip
-            ${{ env.FUSION_ID }}-${{ env.NERD_SUFFIX }}-${{ env.NARROW_SUFFIX }}-NHT.zip
+            ${{ env.FUSION_ID }}-${{ env.NERD_SUFFIX }}-${{ env.NARROW_SUFFIX }}-XX.zip
           tag_name: ${{ env.FUSION_VERSION }}
           name: ${{ env.FUSION_VERSION }}
           body: >
