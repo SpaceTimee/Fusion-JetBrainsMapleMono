@@ -15,8 +15,8 @@
 ## 实时监测
 最近一次检查更新的时间:
 
-* 北京时间: <!--BJT_TIME-->2025-02-21 19:02:24<!--BJT_TIME-->
-* UTC 时间: <!--UTC_TIME-->2025-02-21 11:02:24<!--UTC_TIME-->
+* 北京时间: <!--BJT_TIME-->2025-02-21 19:20:44<!--BJT_TIME-->
+* UTC 时间: <!--UTC_TIME-->2025-02-21 11:20:44<!--UTC_TIME-->
 
 ## 下载地址
 1. **Github (latest): [https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono/releases/latest](https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono/releases/latest)**
