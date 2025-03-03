@@ -68,13 +68,13 @@ jobs:
           git pull --rebase "origin" "main"
           git push
 
-  check_release_updates:
+  check-release-updates:
     name: Check Release Updates
     runs-on: ubuntu-latest
     outputs:
-      IS_RELEASE_UPDATED: ${{ steps.check_release_updates.outputs.IS_RELEASE_UPDATED }}
-      JETBRAINS_LATEST_VERSION: ${{ steps.check_release_updates.outputs.JETBRAINS_LATEST_VERSION }}
-      MAPLE_LATEST_VERSION: ${{ steps.check_release_updates.outputs.MAPLE_LATEST_VERSION }}
+      IS_RELEASE_UPDATED: ${{ steps.check-release-updates.outputs.IS_RELEASE_UPDATED }}
+      JETBRAINS_LATEST_VERSION: ${{ steps.check-release-updates.outputs.JETBRAINS_LATEST_VERSION }}
+      MAPLE_LATEST_VERSION: ${{ steps.check-release-updates.outputs.MAPLE_LATEST_VERSION }}
 
     steps:
       - name: Fetch Git Folder
@@ -99,7 +99,7 @@ jobs:
           github-token: ${{ secrets.GH_TOKEN }}
 
       - name: Check Release Updates
-        id: check_release_updates
+        id: check-release-updates
         run: |
           JETBRAINS_PREV_VERSION="$(cat "jetbrains_version.txt" 2> "/dev/null" || echo "")"
           MAPLE_PREV_VERSION="$(cat "maple_version.txt" 2> "/dev/null" || echo "")"
@@ -127,13 +127,13 @@ jobs:
           name: Versions
           path: "*_version.txt"
 
-  check_commit_updates:
+  check-commit-updates:
     name: Check Commit Updates
     runs-on: ubuntu-latest
     outputs:
-      IS_COMMIT_UPDATED: ${{ steps.check_commit_updates.outputs.IS_COMMIT_UPDATED }}
-      JETBRAINS_LATEST_HASH: ${{ steps.check_commit_updates.outputs.JETBRAINS_LATEST_HASH }}
-      MAPLE_LATEST_HASH: ${{ steps.check_commit_updates.outputs.MAPLE_LATEST_HASH }}
+      IS_COMMIT_UPDATED: ${{ steps.check-commit-updates.outputs.IS_COMMIT_UPDATED }}
+      JETBRAINS_LATEST_HASH: ${{ steps.check-commit-updates.outputs.JETBRAINS_LATEST_HASH }}
+      MAPLE_LATEST_HASH: ${{ steps.check-commit-updates.outputs.MAPLE_LATEST_HASH }}
 
     steps:
       - name: Fetch Git Folder
@@ -158,7 +158,7 @@ jobs:
           github-token: ${{ secrets.GH_TOKEN }}
 
       - name: Check Commit Updates
-        id: check_commit_updates
+        id: check-commit-updates
         run: |
           JETBRAINS_PREV_HASH="$(cat "jetbrains_hash.txt" 2> "/dev/null" || echo "")"
           MAPLE_PREV_HASH="$(cat "maple_hash.txt" 2> "/dev/null" || echo "")"
@@ -186,13 +186,13 @@ jobs:
           name: Hashes
           path: "*_hash.txt"
 
-  fuse_fonts:
+  fuse-fonts:
     name: Fuse Fonts
     runs-on: ubuntu-latest
     needs:
-      - check_release_updates
-      - check_commit_updates
-    if: ${{ needs.check_release_updates.outputs.IS_RELEASE_UPDATED == 'true' || needs.check_commit_updates.outputs.IS_COMMIT_UPDATED == 'true' }}
+      - check-release-updates
+      - check-commit-updates
+    if: ${{ needs.check-release-updates.outputs.IS_RELEASE_UPDATED == 'true' || needs.check-commit-updates.outputs.IS_COMMIT_UPDATED == 'true' }}
     strategy:
       fail-fast: false
       matrix:
@@ -210,10 +210,10 @@ jobs:
           - SUFFIX: XX
             ARGS: ""
     env:
-      JETBRAINS_LATEST_VERSION: ${{ needs.check_release_updates.outputs.JETBRAINS_LATEST_VERSION }}
-      JETBRAINS_LATEST_HASH: ${{ needs.check_commit_updates.outputs.JETBRAINS_LATEST_HASH }}
-      MAPLE_LATEST_VERSION: ${{ needs.check_release_updates.outputs.MAPLE_LATEST_VERSION }}
-      MAPLE_LATEST_HASH: ${{ needs.check_commit_updates.outputs.MAPLE_LATEST_HASH }}
+      JETBRAINS_LATEST_VERSION: ${{ needs.check-release-updates.outputs.JETBRAINS_LATEST_VERSION }}
+      JETBRAINS_LATEST_HASH: ${{ needs.check-commit-updates.outputs.JETBRAINS_LATEST_HASH }}
+      MAPLE_LATEST_VERSION: ${{ needs.check-release-updates.outputs.MAPLE_LATEST_VERSION }}
+      MAPLE_LATEST_HASH: ${{ needs.check-commit-updates.outputs.MAPLE_LATEST_HASH }}
       MODE: ${{ matrix.MODE }}
       NERD_SUFFIX: ${{ matrix.NERD.SUFFIX }}
       NERD_ARGS: ${{ matrix.NERD.ARGS }}
