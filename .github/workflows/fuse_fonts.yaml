@@ -224,9 +224,9 @@ jobs:
       - name: Fetch Python Script & OFL License
         uses: actions/checkout@v4
         with:
-          sparse-checkout:
-            - fuse_fonts.py
-            - OFL.txt
+          sparse-checkout: |
+            fuse_fonts.py
+            OFL.txt
 
       - name: Generate Version
         run: |
