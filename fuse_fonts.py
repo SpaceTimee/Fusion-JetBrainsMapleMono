@@ -13,6 +13,7 @@ for glyph in jetbrains_font.getGlyphNames():
         maple_font['hmtx'].metrics[glyph] = jetbrains_font['hmtx'].metrics[glyph]
 
 maple_font['glyf'].glyphOrder = list(maple_font['glyf'].glyphs.keys())
+maple_font['hmtx'].glyphOrder = maple_font['glyf'].glyphOrder
 maple_font['maxp'].numGlyphs = len(maple_font['glyf'].glyphOrder)
 
 maple_font.save('merged.ttf')
