@@ -296,8 +296,6 @@ jobs:
                 "$FUSION_NAME" \
                 "$FUSION_NAME $STYLE" \
                 "$STYLE" \
-                "$(echo -e "$JETBRAINS_COPYRIGHT\n$MAPLE_COPYRIGHT\n$FUSION_COPYRIGHT")" \
-                "$FUSION_VERSION" \
                 "fused-font-HT.ttf"
             else
               fontforge "fuse_fonts.ff" \
