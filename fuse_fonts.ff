@@ -1,17 +1,6 @@
 #!/usr/bin/fontforge
 
-Open($1)
-SelectAll()
-ScaleToEm(1000)
-Generate("maple.tmp")
-Close()
-
 Open($2)
-SelectAll()
-ScaleToEm(1000)
-Generate("jetbrains.tmp")
-
-Open("jetbrains.tmp")
-MergeFonts("maple.tmp")
-Generate("merged.ttf")
+MergeFonts($1)
+Generate("fused-font-HT.ttf")
 Close()

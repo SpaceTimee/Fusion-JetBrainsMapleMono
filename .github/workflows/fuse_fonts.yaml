@@ -225,7 +225,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           sparse-checkout: |
-            # fuse_fonts.py
             fuse_fonts.ff
             OFL.txt
 
@@ -246,9 +245,6 @@ jobs:
           python-version: 3.x
           check-latest: true
 
-      - name: Install Pip Dependencies
-        run: pip install gftools fonttools
-
       - name: Build JetBrains
         run: |
           if [[ "$MODE" == "Release" ]]; then
@@ -258,6 +254,7 @@ jobs:
           fi
 
           cd "JetBrainsMono"
+          pip install -r "requirements.txt"
           gftools builder "sources/config.yaml"
           cd ".."
           mkdir -p "source-fonts/jetbrains"
@@ -282,23 +279,20 @@ jobs:
             cp -r "maple-font/fonts/CN/"* "source-fonts/maple/"
           fi
 
+      - name: Install FontForge
+        run: sudo apt-get -y install fontforge
+
       - name: Fuse Fonts
         run: |
           mkdir -p "fused-fonts-HT"
           mkdir -p "fused-fonts-XX"
-          sudo apt-get -y install fontforge
+
           for STYLE in "Thin" "ThinItalic" "ExtraLight" "ExtraLightItalic" "Light" "LightItalic" "Regular" "Italic" "Medium" "MediumItalic" "SemiBold" "SemiBoldItalic" "Bold" "BoldItalic" "ExtraBold" "ExtraBoldItalic"; do
             if [[ "$NERD_SUFFIX" == "NF" ]]; then
-              # fonttools merge "source-fonts/maple/MapleMonoNormal-NF-CN-$STYLE.ttf" "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf"
-              # python "fuse_fonts.py" "source-fonts/maple/MapleMonoNormal-NF-CN-$STYLE.ttf" "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf"
-              fontforge -lang=ff -script "fuse_fonts.ff" "source-fonts/maple/MapleMonoNormal-NF-CN-$STYLE.ttf" "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf"
+              fontforge "fuse_fonts.ff" "source-fonts/maple/MapleMonoNormal-NF-CN-$STYLE.ttf" "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf"
             else
-              # fonttools merge "source-fonts/maple/MapleMonoNormal-CN-$STYLE.ttf" "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf"
-              # python "fuse_fonts.py" "source-fonts/maple/MapleMonoNormal-CN-$STYLE.ttf" "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf"
-              fontforge -lang=ff -script "fuse_fonts.ff" "source-fonts/maple/MapleMonoNormal-CN-$STYLE.ttf" "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf"
+              fontforge "fuse_fonts.ff" "source-fonts/maple/MapleMonoNormal-CN-$STYLE.ttf" "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf"
             fi
-
-            mv "merged.ttf" "fused-font-HT.ttf"
 
             gftools rename-font "fused-font-HT.ttf" "$FUSION_NAME"
             gftools update-nameids "fused-font-HT.ttf" \
