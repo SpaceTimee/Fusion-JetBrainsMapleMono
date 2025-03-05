@@ -314,6 +314,7 @@ jobs:
               --description "$FUSION_DESCRIPTION" \
               --designer "$FUSION_DEVELOPER" \
               --manufacturer "$FUSION_DEVELOPER" \
+              --trademark "$FUSION_DEVELOPER" \
               --version "$FUSION_VERSION" \
               --copyright "$(echo -e "$JETBRAINS_COPYRIGHT\n$MAPLE_COPYRIGHT\n$FUSION_COPYRIGHT")" \
               --license "$FUSION_LICENSE"
