@@ -225,7 +225,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           sparse-checkout: |
-            fuse_fonts.py
+            # fuse_fonts.py
+            fuse_fonts.ff
             OFL.txt
 
       - name: Generate Version
@@ -288,10 +289,12 @@ jobs:
           for STYLE in "Thin" "ThinItalic" "ExtraLight" "ExtraLightItalic" "Light" "LightItalic" "Regular" "Italic" "Medium" "MediumItalic" "SemiBold" "SemiBoldItalic" "Bold" "BoldItalic" "ExtraBold" "ExtraBoldItalic"; do
             if [[ "$NERD_SUFFIX" == "NF" ]]; then
               # fonttools merge "source-fonts/maple/MapleMonoNormal-NF-CN-$STYLE.ttf" "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf"
-              python "fuse_fonts.py" "source-fonts/maple/MapleMonoNormal-NF-CN-$STYLE.ttf" "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf"
+              # python "fuse_fonts.py" "source-fonts/maple/MapleMonoNormal-NF-CN-$STYLE.ttf" "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf"
+              fontforge -lang=ff -script "fuse_fonts.ff" "source-fonts/maple/MapleMonoNormal-NF-CN-$STYLE.ttf" "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf"
             else
               # fonttools merge "source-fonts/maple/MapleMonoNormal-CN-$STYLE.ttf" "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf"
-              python "fuse_fonts.py" "source-fonts/maple/MapleMonoNormal-CN-$STYLE.ttf" "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf"
+              # python "fuse_fonts.py" "source-fonts/maple/MapleMonoNormal-CN-$STYLE.ttf" "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf"
+              fontforge -lang=ff -script "fuse_fonts.ff" "source-fonts/maple/MapleMonoNormal-CN-$STYLE.ttf" "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf"
             fi
 
             mv "merged.ttf" "fused-font-HT.ttf"
