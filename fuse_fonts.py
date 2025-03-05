@@ -20,7 +20,7 @@ for glyph in jetbrains_font.getGlyphNames():
     if glyph in jetbrains_font['hmtx'].metrics:
         maple_font['hmtx'].metrics[glyph] = jetbrains_font['hmtx'].metrics[glyph]
 
-maple_font['glyf'].glyphOrder = list(jetbrains_font.getGlyphNames())
+maple_font['glyf'].glyphOrder = list(maple_font.getGlyphNames())
 maple_font['maxp'].numGlyphs = len(maple_font['glyf'].glyphOrder)
 maple_font['hhea'].numberOfMetrics = len(maple_font['hmtx'].metrics)
 
