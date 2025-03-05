@@ -8,11 +8,10 @@
 * 适用平台: Any
 
 ## 字形特征
+* 完美融合，Maple Mono 补充 JetBrains Mono 中文字形空缺
 * 高可读性，等宽无衬线，中英文 2:1 宽完美对齐
 * 丰富字重，智能连字，Nerd Font，Hints 原生支持
-* 实时更新，构建合成发布全流程自动化
-* JetBrains Mono (英文字形) + Maple Mono (中文字形) 双字形
-* 中英文字形由前后文自动选择，选择规则可参考 [Fusion JetBrainsMapleMono Glyph](https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono/wiki/Fusion-JetBrainsMapleMono-Glyph)
+* 实时更新，构建合成优化发布全流程自动化
 
 ![Font Showcase](https://github.com/user-attachments/assets/e3b061f2-1c81-4021-8d73-9ea9bb741084)
 
@@ -32,7 +31,7 @@
 
 ## 脚本流程
 1. 每 5 - 15 分钟自动向上游 JetBrains Mono & Maple Mono 存储库**检查 Release 和 Commit 更新**
-2. 如有更新则**构建、合成字体，并覆写元数据**
+2. 如有更新则**构建、合成字体，覆写元数据，并清理冗余控制点**
 3. 如构建、合成成功则**将字体发布到 Github Release** (Release 发布为 latest，Commit 发布在 preview)
 
 > 可手动选择跳过检查更新强制合成字体
