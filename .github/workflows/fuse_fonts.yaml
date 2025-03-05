@@ -317,9 +317,9 @@ jobs:
               --trademark "" \
               --version "$FUSION_VERSION" \
               --copyright "$(echo -e "$JETBRAINS_COPYRIGHT\n$MAPLE_COPYRIGHT\n$FUSION_COPYRIGHT")" \
-              --license "$FUSION_LICENSE"
-              --urlvendor "https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono"
-              --urldesigner "https://www.spacetimee.xyz"
+              --license "$FUSION_LICENSE" \
+              --urlvendor "https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono" \
+              --urldesigner "https://www.spacetimee.xyz" \
               --urllicense "https://openfontlicense.org"
             gftools drop-hints "fused-font-HT.ttf.fix" "fused-font-XX.ttf.fix"
 
