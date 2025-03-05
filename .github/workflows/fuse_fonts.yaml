@@ -289,9 +289,25 @@ jobs:
 
           for STYLE in "Thin" "ThinItalic" "ExtraLight" "ExtraLightItalic" "Light" "LightItalic" "Regular" "Italic" "Medium" "MediumItalic" "SemiBold" "SemiBoldItalic" "Bold" "BoldItalic" "ExtraBold" "ExtraBoldItalic"; do
             if [[ "$NERD_SUFFIX" == "NF" ]]; then
-              fontforge "fuse_fonts.ff" "source-fonts/maple/MapleMonoNormal-NF-CN-$STYLE.ttf" "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf"
+              fontforge "fuse_fonts.ff" \
+                "source-fonts/maple/MapleMonoNormal-NF-CN-$STYLE.ttf" \
+                "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf" \
+                "$FUSION_ID-$STYLE" \
+                "$FUSION_NAME" \
+                "$FUSION_NAME $STYLE" \
+                "$STYLE" \
+                "$(echo -e "$JETBRAINS_COPYRIGHT\n$MAPLE_COPYRIGHT\n$FUSION_COPYRIGHT")" \
+                "$FUSION_VERSION" \
+                "fused-font-HT.ttf"
             else
-              fontforge "fuse_fonts.ff" "source-fonts/maple/MapleMonoNormal-CN-$STYLE.ttf" "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf"
+              fontforge "fuse_fonts.ff" \
+                "source-fonts/maple/MapleMonoNormal-CN-$STYLE.ttf" \
+                "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf" \
+                "$FUSION_ID-$STYLE" \
+                "$FUSION_NAME" \
+                "$FUSION_NAME $STYLE" \
+                "$STYLE" \
+                "fused-font-HT.ttf"
             fi
 
             gftools rename-font "fused-font-HT.ttf" "$FUSION_NAME"
