@@ -8,8 +8,9 @@ for glyph in jetbrains_font.getGlyphNames():
     # if glyph in maple_font['glyf'].glyphs:
     maple_font['glyf'].glyphs[glyph] = jetbrains_font['glyf'].glyphs[glyph]
 
-    # if maple_font['glyf'].glyphs[glyph].isComposite():
-    #     maple_font['glyf'].glyphs[glyph].expand(jetbrains_font['glyf'])
+    if maple_font['glyf'].glyphs[glyph].isComposite():
+        maple_font['glyf'].glyphs[glyph].expand(maple_font['glyf'])
+
     if glyph in jetbrains_font['hmtx'].metrics:
         maple_font['hmtx'].metrics[glyph] = jetbrains_font['hmtx'].metrics[glyph]
 
