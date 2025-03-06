@@ -3,7 +3,7 @@
 </br>
 
 ## 自我介绍
-**JetBrains Maple Mono**: 一只基于 **Github Workflow (Bash)** 的 [JetBrains Mono](https://github.com/JetBrains/JetBrainsMono) + [Maple Mono](https://github.com/subframe7536/maple-font) 合成字体
+**JetBrains Maple Mono**: 一只基于 **Github Workflows (Bash)** 的 [JetBrains Mono](https://github.com/JetBrains/JetBrainsMono) + [Maple Mono](https://github.com/subframe7536/maple-font) 合成字体
 
 * 适用平台: Any
 
