@@ -59,7 +59,8 @@
 **Space Time**
 
 ## 联系方式
-**邮箱: Zeus6_6@163.com**
+1. **邮箱: Zeus6_6@163.com**
+2. 我的[其他项目](https://github.com/SpaceTimee/Sheas-Cealer)的 QQ 群: 716266896，338919498
 
 ## 开源协议
 [OFL-1.1](https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono?tab=OFL-1.1-1-ov-file)
