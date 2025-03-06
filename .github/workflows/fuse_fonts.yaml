@@ -280,7 +280,7 @@ jobs:
           fi
 
       - name: Install FontForge
-        run: sudo apt-get -y install fontforge
+        run: sudo apt-get -y install "fontforge"
 
       - name: Fuse Fonts
         run: |
