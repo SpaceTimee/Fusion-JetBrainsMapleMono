@@ -1,8 +1,19 @@
 #!/usr/bin/fontforge
 
-Open($2)
-MergeFonts($1)
-SetFontNames($3, $4, $5, $6)
-Simplify(-1, 0)
-Generate($7)
-Close()
+Open($2);
+MergeFonts($1);
+SetFontNames($3, $4, $5, $6);
+SetFontOrder(2);
+
+SelectAll();
+AutoInstr();
+AutoHint();
+AddExtrema();
+CanonicalContours();
+CanonicalStart();
+Simplify(-1, 1);
+RoundToInt();
+RemoveOverlap();
+
+Generate($7);
+Close();
