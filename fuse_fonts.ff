@@ -3,6 +3,6 @@
 Open($2)
 MergeFonts($1)
 SetFontNames($3, $4, $5, $6)
-Simplify(-1)
+Simplify(-1, 0)
 Generate($7)
 Close()
