@@ -13,7 +13,7 @@
 * 丰富字重，智能连字，Nerd Font，Hints 原生支持
 * 实时更新，构建合成优化发布全流程自动化
 
-![Font Showcase](https://github.com/user-attachments/assets/e3b061f2-1c81-4021-8d73-9ea9bb741084)
+![Font Showcase](https://github.com/user-attachments/assets/6587588d-1a9d-4ee7-a0f9-8dd2e7f417e0)
 
 ## 下载地址
 1. **Github (latest): [https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono/releases/latest](https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono/releases/latest)**
