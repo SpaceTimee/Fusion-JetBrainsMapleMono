@@ -32,6 +32,9 @@
 ## 注意事项
 如果你在 Visual Studio 中使用本字体，请务必在 `设置 -> 文本编辑器 -> 高级` 中将 `文本格式设置方法` 设为 `理想`，否则可能导致字体渲染不均匀
 
+## CDN 托管
+ZeoSeven Fonts: [https://fonts.zeoseven.com/items/521](https://fonts.zeoseven.com/items/521)
+
 ## 脚本流程
 1. 每 5 - 30 分钟自动向上游 JetBrains Mono & Maple Mono 存储库**检查 Release 和 Commit 更新**
 
