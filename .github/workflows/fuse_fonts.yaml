@@ -226,6 +226,7 @@ jobs:
         with:
           sparse-checkout: |
             .git
+            fonts
             fuse_fonts.ff
             OFL.txt
 
