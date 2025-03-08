@@ -51,8 +51,8 @@ ZeoSeven Fonts: [https://fonts.zeoseven.com/items/521](https://fonts.zeoseven.co
 ## 实时监测
 最近一次检查更新的时间:
 
-* 北京时间: <!--BJT_TIME-->2025-03-08 11:51:00<!--BJT_TIME-->
-* UTC 时间: <!--UTC_TIME-->2025-03-08 03:51:00<!--UTC_TIME-->
+* 北京时间: <!--BJT_TIME-->2025-03-08 12:58:05<!--BJT_TIME-->
+* UTC 时间: <!--UTC_TIME-->2025-03-08 04:58:05<!--UTC_TIME-->
 
 ## 未来路线
 我希望字体未来能直接基于思源圆体或思源黑体以获得更大的自定义空间，如自定义笔画末端弧度以及包含更多字符集等
