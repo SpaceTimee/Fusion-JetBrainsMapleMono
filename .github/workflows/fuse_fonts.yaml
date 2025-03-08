@@ -390,8 +390,9 @@ jobs:
         if: ${{ env.MODE == 'Commit' }}
         run: |
           mkdir -p "fonts/ttf"
+          rm "fused-fonts-XX/LICENSE.txt"
           cp "fused-fonts-XX/"* "fonts/ttf/"
-          
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add "fonts/ttf/"
