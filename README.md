@@ -8,7 +8,7 @@
 * 适用平台: Any
 
 ## 字形特征
-* 完美融合，Maple Mono 补充 JetBrains Mono 中日韩字形空缺
+* 完美融合，Maple Mono 补充 JetBrains Mono 中日字形空缺
 * 高可读性，等宽无衬线，中英文 2:1 宽完美对齐
 * 丰富字重，智能连字，Nerd Font，Hints 原生支持
 * 实时更新，构建合成优化发布全流程自动化
@@ -60,10 +60,10 @@ ZSFT: [https://fonts.zeoseven.com/items/521](https://fonts.zeoseven.com/items/52
 3. 直接基于资源圆体或思源黑体以获得更大的自定义空间，如自定义笔画末端弧度以及包含更多字符集等
 
 ## 致谢名单
-* **JetBrains Mono: 为本项目提供所有非中日韩字形设计**
-* **Maple Mono: 为本项目提供所有中日韩字形设计**
-* **Resource Han Rounded: 为本项目提供所有中日韩基础字形设计**
-* **Source Han Sans: 为本项目提供所有中日韩基础字形设计**
+* **JetBrains Mono: 为本项目提供所有非中日字形设计**
+* **Maple Mono: 为本项目提供所有中日字形设计**
+* **Resource Han Rounded: 为本项目提供所有中日基础字形设计**
+* **Source Han Sans: 为本项目提供所有中日基础字形设计**
 
 ## 开发者
 **Space Time**
