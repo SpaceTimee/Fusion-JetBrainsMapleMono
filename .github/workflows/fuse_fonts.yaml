@@ -222,6 +222,9 @@ jobs:
 
     steps:
       - name: Fetch Python Script & OFL License
+        if: >-
+          ${{ needs.check-release-updates.outputs.IS_RELEASE_UPDATED == 'true' && env.MODE == 'Release' ||
+          needs.check-commit-updates.outputs.IS_COMMIT_UPDATED == 'true' && env.MODE == 'Commit' }}
         uses: actions/checkout@v4
         with:
           sparse-checkout: |
@@ -229,6 +232,9 @@ jobs:
             OFL.txt
 
       - name: Generate Version
+        if: >-
+          ${{ needs.check-release-updates.outputs.IS_RELEASE_UPDATED == 'true' && env.MODE == 'Release' ||
+          needs.check-commit-updates.outputs.IS_COMMIT_UPDATED == 'true' && env.MODE == 'Commit' }}
         run: |
           if [[ "$MODE" == "Release" ]]; then
             FUSION_VERSION="1.$(tr -d "." <<< "${JETBRAINS_LATEST_VERSION//v/}").$(tr -d "." <<< "${MAPLE_LATEST_VERSION//v/}")"
@@ -240,12 +246,18 @@ jobs:
           echo "Version: $FUSION_VERSION"
 
       - name: Setup Python
+        if: >-
+          ${{ needs.check-release-updates.outputs.IS_RELEASE_UPDATED == 'true' && env.MODE == 'Release' ||
+          needs.check-commit-updates.outputs.IS_COMMIT_UPDATED == 'true' && env.MODE == 'Commit' }}
         uses: actions/setup-python@v5
         with:
           python-version: 3.x
           check-latest: true
 
       - name: Build JetBrains
+        if: >-
+          ${{ needs.check-release-updates.outputs.IS_RELEASE_UPDATED == 'true' && env.MODE == 'Release' ||
+          needs.check-commit-updates.outputs.IS_COMMIT_UPDATED == 'true' && env.MODE == 'Commit' }}
         run: |
           if [[ "$MODE" == "Release" ]]; then
             git clone --branch "$JETBRAINS_LATEST_VERSION" --single-branch "$JETBRAINS_GIT_URL"
@@ -261,6 +273,9 @@ jobs:
           cp -r "JetBrainsMono/fonts/ttf/"* "source-fonts/jetbrains/"
 
       - name: Build Maple
+        if: >-
+          ${{ needs.check-release-updates.outputs.IS_RELEASE_UPDATED == 'true' && env.MODE == 'Release' ||
+          needs.check-commit-updates.outputs.IS_COMMIT_UPDATED == 'true' && env.MODE == 'Commit' }}
         run: |
           if [[ "$MODE" == "Release" ]]; then
             git clone --branch "$MAPLE_LATEST_VERSION" --single-branch "$MAPLE_GIT_URL"
@@ -280,11 +295,17 @@ jobs:
           fi
 
       - name: Install FontForge & FtCli
+        if: >-
+          ${{ needs.check-release-updates.outputs.IS_RELEASE_UPDATED == 'true' && env.MODE == 'Release' ||
+          needs.check-commit-updates.outputs.IS_COMMIT_UPDATED == 'true' && env.MODE == 'Commit' }}
         run: |
           sudo apt-get -y install "fontforge"
           pip install "foundrytools-cli"
 
       - name: Fuse Fonts
+        if: >-
+          ${{ needs.check-release-updates.outputs.IS_RELEASE_UPDATED == 'true' && env.MODE == 'Release' ||
+          needs.check-commit-updates.outputs.IS_COMMIT_UPDATED == 'true' && env.MODE == 'Commit' }}
         run: |
           mkdir -p "fused-fonts-HT"
           mkdir -p "fused-fonts-XX"
@@ -335,12 +356,15 @@ jobs:
           done
 
       - name: Zip Fonts
+        if: >-
+          ${{ needs.check-release-updates.outputs.IS_RELEASE_UPDATED == 'true' && env.MODE == 'Release' ||
+          needs.check-commit-updates.outputs.IS_COMMIT_UPDATED == 'true' && env.MODE == 'Commit' }}
         run: |
           zip -r -j "$FUSION_ID-$NERD_SUFFIX-$NARROW_SUFFIX-HT.zip" "fused-fonts-HT/"
           zip -r -j "$FUSION_ID-$NERD_SUFFIX-$NARROW_SUFFIX-XX.zip" "fused-fonts-XX/"
 
       - name: Release Release Fonts
-        if: ${{ env.MODE == 'Release' }}
+        if: ${{ needs.check-release-updates.outputs.IS_RELEASE_UPDATED == 'true' && env.MODE == 'Release' }}
         uses: softprops/action-gh-release@v2
         with:
           files: |
@@ -365,7 +389,7 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
 
       - name: Release Commit Fonts
-        if: ${{ env.MODE == 'Commit' }}
+        if: ${{ needs.check-commit-updates.outputs.IS_COMMIT_UPDATED == 'true' && env.MODE == 'Commit' }}
         uses: softprops/action-gh-release@v2
         with:
           files: |
