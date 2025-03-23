@@ -106,7 +106,8 @@ jobs:
           JETBRAINS_LATEST_VERSION="$(curl -s "$JETBRAINS_LATEST_Release_API_URL" | jq -r ".tag_name")"
           MAPLE_LATEST_VERSION="$(curl -s "$MAPLE_LATEST_Release_API_URL" | jq -r ".tag_name")"
 
-          if [[ "$FORCE" == "true" || "$JETBRAINS_PREV_VERSION" != "$JETBRAINS_LATEST_VERSION" || "$MAPLE_PREV_VERSION" != "$MAPLE_LATEST_VERSION" ]]; then
+          if [[ "$FORCE" == "true" || ("$JETBRAINS_PREV_VERSION" != "$JETBRAINS_LATEST_VERSION" || "$MAPLE_PREV_VERSION" != "$MAPLE_LATEST_VERSION" && \
+            "$JETBRAINS_LATEST_VERSION" != "null" && "$MAPLE_LATEST_VERSION" != "null") ]]; then
             echo "IS_RELEASE_UPDATED=true" >> "$GITHUB_OUTPUT"
             echo "JETBRAINS_LATEST_VERSION="$JETBRAINS_LATEST_VERSION"" >> "$GITHUB_OUTPUT"
             echo "MAPLE_LATEST_VERSION="$MAPLE_LATEST_VERSION"" >> "$GITHUB_OUTPUT"
