@@ -332,6 +332,10 @@ jobs:
                 "fused-font-HT.ttf"
             fi
 
+            ttx "fused-font-HT.ttf"
+            sed -i "s|<xAvgCharWidth value=\".*\"/>|<xAvgCharWidth value=\"600\"/>|" "fused-font-HT.ttx"
+            ttx -o "fused-font-HT.ttf" "fused-font-HT.ttx"
+
             gftools rename-font "fused-font-HT.ttf" "$FUSION_NAME"
             gftools update-nameids "fused-font-HT.ttf" \
               --uniqueid "$FUSION_ID-$STYLE-$FUSION_VERSION" \
