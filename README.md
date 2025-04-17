@@ -46,7 +46,7 @@ ZSFT: [https://fonts.zeoseven.com/items/521](https://fonts.zeoseven.com/items/52
 
 3. 如构建、合成、优化成功则**将字体发布到 Github Release** (Release 发布为 latest，Commit 发布在 preview)
 
-> 完整执行一次脚本流程约需耗时 2h
+> 完整执行一次脚本流程约需耗时 3h
 
 ## 实时监测
 最近一次检查更新的时间:
