@@ -334,6 +334,7 @@ jobs:
 
             ttx "fused-font-HT.ttf"
             sed -i "s|<xAvgCharWidth value=\".*\"/>|<xAvgCharWidth value=\"600\"/>|" "fused-font-HT.ttx"
+            sed -i "s|<ulCodePageRange1 value=\".*\"/>|<ulCodePageRange1 value=\"00100000 00010110 00000001 10011111\"/>|" "fused-font-HT.ttx"
             ttx -o "fused-font-HT.ttf" "fused-font-HT.ttx"
             rm "fused-font-HT.ttx"
 
