@@ -70,7 +70,7 @@ ZSFT: [https://fonts.zeoseven.com/items/521](https://fonts.zeoseven.com/items/52
 
 ## 联系方式
 1. **邮箱: Zeus6_6@163.com**
-2. 我的[其他项目](https://github.com/SpaceTimee/Sheas-Cealer)的 QQ 群: 716266896，338919498
+2. 我的[其他项目](https://github.com/SpaceTimee/Sheas-Cealer)的 QQ 群: 1034315671，716266896，338919498
 
 ## 开源协议
 [OFL-1.1](https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono?tab=OFL-1.1-1-ov-file)
