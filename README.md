@@ -30,7 +30,8 @@
 > 如果依然不清楚如何选择请下载 **JetBrainsMapleMono-XX-XX-XX.zip**
 
 ## 注意事项
-如果你在 Visual Studio 中使用本字体，请务必在 `设置 -> 文本编辑器 -> 高级` 中将 `文本格式设置方法` 设为 `理想`，否则可能导致字体渲染不均匀
+1. 如果在 Visual Studio 中使用本字体，请务必在 `设置 -> 文本编辑器 -> 高级` 中将 `文本格式设置方法` 设置为 `理想`，否则可能导致字体渲染不均匀
+2. 如果需要在 VS Code 中启用连字，请在 `settings.json` 中添加以下配置 `"editor.fontLigatures": true`，反之删除
 
 ## CDN 托管
 ZSFT: [https://fonts.zeoseven.com/items/521](https://fonts.zeoseven.com/items/521)
