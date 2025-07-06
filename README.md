@@ -52,8 +52,8 @@ ZSFT: [https://fonts.zeoseven.com/items/521](https://fonts.zeoseven.com/items/52
 ## 实时监测
 最近一次检查更新的时间:
 
-* 北京时间: <!--BJT_TIME-->2025-07-07 01:39:48<!--BJT_TIME-->
-* UTC 时间: <!--UTC_TIME-->2025-07-06 17:39:48<!--UTC_TIME-->
+* 北京时间: <!--BJT_TIME-->2025-07-07 01:49:57<!--BJT_TIME-->
+* UTC 时间: <!--UTC_TIME-->2025-07-06 17:49:57<!--UTC_TIME-->
 
 ## 未来路线
 1. 添加可变字重版本
