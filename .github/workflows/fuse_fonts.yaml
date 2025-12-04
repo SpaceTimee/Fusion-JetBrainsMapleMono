@@ -257,7 +257,7 @@ jobs:
           needs.check-commit-updates.outputs.IS_COMMIT_UPDATED == 'true' && env.MODE == 'Commit' }}
         uses: actions/setup-python@v5
         with:
-          python-version: 3.12
+          python-version: 3.13
 
       - name: Build JetBrains
         if: >-
@@ -320,6 +320,10 @@ jobs:
               "$FUSION_NAME $STYLE" \
               "$STYLE" \
               "fused-font-HT.ttf"
+
+            if [[ "$LIGA_SUFFIX" == "NL" ]]; then
+              fontforge "strip_ligas.ff" "fused-font-HT.ttf"
+            fi
 
             if [[ "$LIGA_SUFFIX" == "NL" ]]; then
               fontforge "strip_ligas.ff" "fused-font-HT.ttf"
