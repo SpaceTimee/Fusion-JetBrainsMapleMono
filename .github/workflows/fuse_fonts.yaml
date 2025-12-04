@@ -257,8 +257,7 @@ jobs:
           needs.check-commit-updates.outputs.IS_COMMIT_UPDATED == 'true' && env.MODE == 'Commit' }}
         uses: actions/setup-python@v5
         with:
-          python-version: 3.x
-          check-latest: true
+          python-version: 3.12
 
       - name: Build JetBrains
         if: >-
