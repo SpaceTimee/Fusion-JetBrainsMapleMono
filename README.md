@@ -1,3 +1,6 @@
+> [!NOTE]
+> NL (无连字) 版本正在调试中，请等我做好再用 [#19](https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono/issues/19)
+
 <h1 align="center">JetBrains Maple Mono</h1>
 <h3 align="center">- JetBrains Mono + Maple Mono -</h3>
 </br>
@@ -20,14 +23,15 @@
 2. Github (preview): [https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono/releases/tag/pre](https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono/releases/tag/pre)
 
 ## 下载哪个
-发布文件按 **JetBrainsMapleMono-[NF/XX]-[NR/XX]-[HT/XX].zip** 的格式命名:
+发布文件按 **JetBrainsMapleMono-[NF/XX]-[NR/XX]-[NL/XX]-[HT/XX].zip** 的格式命名:
 
 1. XX: 占位符，表示该字体没有增加这一特性
 2. NF: Nerd Font，为部分开发工具、命令行终端、代码编辑器等提供图标支持 (会导致字体文件体积略微增大)
 3. NR: CN Narrow，缩小中日字体间距 (会导致 中英文 / 日英文 不再 2:1 宽完美对齐)
-4. HT: Hinted，使字体在低分辨率屏幕上 (<=1080P) 的渲染更加均匀 (可能会导致字体在高分辨率屏幕上的渲染略微模糊)
+4. NL: No Ligatures，禁用连字
+5. HT: Hinted，使字体在低分辨率屏幕上 (<=1080P) 的渲染更加均匀 (可能会导致字体在高分辨率屏幕上的渲染略微模糊)
 
-> 如果依然不清楚如何选择请下载 **JetBrainsMapleMono-XX-XX-XX.zip**
+> 如果依然不清楚如何选择请下载 **JetBrainsMapleMono-XX-XX-XX-XX.zip**
 
 ## 注意事项
 1. 如果在 Visual Studio 中使用本字体，请务必在 `设置 -> 文本编辑器 -> 高级` 中将 `文本格式设置方法` 设置为 `理想`，否则可能导致字体渲染不均匀
@@ -52,8 +56,8 @@ ZSFT: [https://fonts.zeoseven.com/items/521](https://fonts.zeoseven.com/items/52
 ## 实时监测
 最近一次检查更新的时间:
 
-* 北京时间: <!--BJT_TIME-->2025-12-04 22:19:52<!--BJT_TIME-->
-* UTC 时间: <!--UTC_TIME-->2025-12-04 14:19:52<!--UTC_TIME-->
+* 北京时间: <!--BJT_TIME-->2025-12-06 11:56:20<!--BJT_TIME-->
+* UTC 时间: <!--UTC_TIME-->2025-12-06 03:56:20<!--UTC_TIME-->
 
 ## 未来路线
 1. 添加可变字重版本
