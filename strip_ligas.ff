@@ -1,0 +1,15 @@
+#!/usr/bin/fontforge
+
+Open($1)
+
+foreach lookup in GetLookups("GSUB")
+  foreach feature in GetLookupInfo(lookup)[2]
+    if (feature[0] == "calt")
+      RemoveLookup(lookup)
+      break
+    endif
+  endloop
+endloop
+
+Generate($1)
+Close()

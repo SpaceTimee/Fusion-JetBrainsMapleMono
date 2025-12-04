@@ -210,6 +210,9 @@ jobs:
             ARGS: --cn-narrow
           - SUFFIX: XX
             ARGS: ""
+        LIGA:
+          - SUFFIX: NL
+          - SUFFIX: XX
     env:
       JETBRAINS_LATEST_VERSION: ${{ needs.check-release-updates.outputs.JETBRAINS_LATEST_VERSION }}
       JETBRAINS_LATEST_HASH: ${{ needs.check-commit-updates.outputs.JETBRAINS_LATEST_HASH }}
@@ -220,6 +223,7 @@ jobs:
       NERD_ARGS: ${{ matrix.NERD.ARGS }}
       NARROW_SUFFIX: ${{ matrix.NARROW.SUFFIX }}
       NARROW_ARGS: ${{ matrix.NARROW.ARGS }}
+      LIGA_SUFFIX: ${{ matrix.LIGA.SUFFIX }}
 
     steps:
       - name: Fetch Python Script & OFL License
@@ -230,6 +234,7 @@ jobs:
         with:
           sparse-checkout: |
             fuse_fonts.ff
+            strip_ligas.ff
             OFL.txt
 
       - name: Generate Version
@@ -289,11 +294,7 @@ jobs:
           python "build.py" --normal --liga --cn --hinted --ttf-only "$NERD_ARGS" $NARROW_ARGS
           cd ".."
           mkdir -p "source-fonts/maple"
-          if [[ "$NERD_SUFFIX" == "NF" ]]; then
-            cp -r "maple-font/fonts/NF-CN/"* "source-fonts/maple/"
-          else
-            cp -r "maple-font/fonts/CN/"* "source-fonts/maple/"
-          fi
+          find "maple-font/fonts" -name "*.ttf" -exec cp -t "source-fonts/maple/" "{}" +
 
       - name: Install FontForge & FtCli
         if: >-
@@ -312,24 +313,17 @@ jobs:
           mkdir -p "fused-fonts-XX"
 
           for STYLE in "Thin" "ThinItalic" "ExtraLight" "ExtraLightItalic" "Light" "LightItalic" "Regular" "Italic" "Medium" "MediumItalic" "SemiBold" "SemiBoldItalic" "Bold" "BoldItalic" "ExtraBold" "ExtraBoldItalic"; do
-            if [[ "$NERD_SUFFIX" == "NF" ]]; then
-              fontforge "fuse_fonts.ff" \
-                "source-fonts/maple/MapleMonoNormal-NF-CN-$STYLE.ttf" \
-                "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf" \
-                "$FUSION_ID-$STYLE" \
-                "$FUSION_NAME" \
-                "$FUSION_NAME $STYLE" \
-                "$STYLE" \
-                "fused-font-HT.ttf"
-            else
-              fontforge "fuse_fonts.ff" \
-                "source-fonts/maple/MapleMonoNormal-CN-$STYLE.ttf" \
-                "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf" \
-                "$FUSION_ID-$STYLE" \
-                "$FUSION_NAME" \
-                "$FUSION_NAME $STYLE" \
-                "$STYLE" \
-                "fused-font-HT.ttf"
+            fontforge "fuse_fonts.ff" \
+              "$(find "source-fonts/maple" -name "*-${STYLE}.ttf" -print -quit)" \
+              "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf" \
+              "$FUSION_ID-$STYLE" \
+              "$FUSION_NAME" \
+              "$FUSION_NAME $STYLE" \
+              "$STYLE" \
+              "fused-font-HT.ttf"
+
+            if [[ "$LIGA_SUFFIX" == "NL" ]]; then
+              fontforge "strip_ligas.ff" "fused-font-HT.ttf"
             fi
 
             ttx "fused-font-HT.ttf"
@@ -367,16 +361,16 @@ jobs:
           ${{ needs.check-release-updates.outputs.IS_RELEASE_UPDATED == 'true' && env.MODE == 'Release' ||
           needs.check-commit-updates.outputs.IS_COMMIT_UPDATED == 'true' && env.MODE == 'Commit' }}
         run: |
-          zip -r -j "$FUSION_ID-$NERD_SUFFIX-$NARROW_SUFFIX-HT.zip" "fused-fonts-HT/"
-          zip -r -j "$FUSION_ID-$NERD_SUFFIX-$NARROW_SUFFIX-XX.zip" "fused-fonts-XX/"
+          zip -r -j "$FUSION_ID-$NERD_SUFFIX-$NARROW_SUFFIX-$LIGA_SUFFIX-HT.zip" "fused-fonts-HT/"
+          zip -r -j "$FUSION_ID-$NERD_SUFFIX-$NARROW_SUFFIX-$LIGA_SUFFIX-XX.zip" "fused-fonts-XX/"
 
       - name: Release Release Fonts
         if: ${{ needs.check-release-updates.outputs.IS_RELEASE_UPDATED == 'true' && env.MODE == 'Release' }}
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            ${{ env.FUSION_ID }}-${{ env.NERD_SUFFIX }}-${{ env.NARROW_SUFFIX }}-HT.zip
-            ${{ env.FUSION_ID }}-${{ env.NERD_SUFFIX }}-${{ env.NARROW_SUFFIX }}-XX.zip
+            ${{ env.FUSION_ID }}-${{ env.NERD_SUFFIX }}-${{ env.NARROW_SUFFIX }}-${{ env.LIGA_SUFFIX }}-HT.zip
+            ${{ env.FUSION_ID }}-${{ env.NERD_SUFFIX }}-${{ env.NARROW_SUFFIX }}-${{ env.LIGA_SUFFIX }}-XX.zip
           tag_name: ${{ env.FUSION_VERSION }}
           name: ${{ env.FUSION_VERSION }}
           body: >
@@ -400,8 +394,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            ${{ env.FUSION_ID }}-${{ env.NERD_SUFFIX }}-${{ env.NARROW_SUFFIX }}-HT.zip
-            ${{ env.FUSION_ID }}-${{ env.NERD_SUFFIX }}-${{ env.NARROW_SUFFIX }}-XX.zip
+            ${{ env.FUSION_ID }}-${{ env.NERD_SUFFIX }}-${{ env.NARROW_SUFFIX }}-${{ env.LIGA_SUFFIX }}-HT.zip
+            ${{ env.FUSION_ID }}-${{ env.NERD_SUFFIX }}-${{ env.NARROW_SUFFIX }}-${{ env.LIGA_SUFFIX }}-XX.zip
           tag_name: ${{ env.FUSION_VERSION }}
           name: ${{ env.FUSION_VERSION }}
           body: >
