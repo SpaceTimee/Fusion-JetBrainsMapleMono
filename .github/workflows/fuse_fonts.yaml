@@ -293,7 +293,11 @@ jobs:
           python "build.py" --normal --liga --cn --hinted --ttf-only "$NERD_ARGS" $NARROW_ARGS
           cd ".."
           mkdir -p "source-fonts/maple"
-          find "maple-font/fonts" -name "*.ttf" -exec cp -t "source-fonts/maple/" "{}" +
+          if [[ "$NERD_SUFFIX" == "NF" ]]; then
+            cp -r "maple-font/fonts/NF-CN/"* "source-fonts/maple/"
+          else
+            cp -r "maple-font/fonts/CN/"* "source-fonts/maple/"
+          fi
 
       - name: Install FontForge & FtCli
         if: >-
@@ -312,17 +316,24 @@ jobs:
           mkdir -p "fused-fonts-XX"
 
           for STYLE in "Thin" "ThinItalic" "ExtraLight" "ExtraLightItalic" "Light" "LightItalic" "Regular" "Italic" "Medium" "MediumItalic" "SemiBold" "SemiBoldItalic" "Bold" "BoldItalic" "ExtraBold" "ExtraBoldItalic"; do
-            fontforge "fuse_fonts.ff" \
-              "$(find "source-fonts/maple" -name "*-${STYLE}.ttf" -print -quit)" \
-              "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf" \
-              "$FUSION_ID-$STYLE" \
-              "$FUSION_NAME" \
-              "$FUSION_NAME $STYLE" \
-              "$STYLE" \
-              "fused-font-HT.ttf"
-
-            if [[ "$LIGA_SUFFIX" == "NL" ]]; then
-              fontforge "strip_ligas.ff" "fused-font-HT.ttf"
+            if [[ "$NERD_SUFFIX" == "NF" ]]; then
+              fontforge "fuse_fonts.ff" \
+                "source-fonts/maple/MapleMonoNormal-NF-CN-$STYLE.ttf" \
+                "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf" \
+                "$FUSION_ID-$STYLE" \
+                "$FUSION_NAME" \
+                "$FUSION_NAME $STYLE" \
+                "$STYLE" \
+                "fused-font-HT.ttf"
+            else
+              fontforge "fuse_fonts.ff" \
+                "source-fonts/maple/MapleMonoNormal-CN-$STYLE.ttf" \
+                "source-fonts/jetbrains/JetBrainsMono-$STYLE.ttf" \
+                "$FUSION_ID-$STYLE" \
+                "$FUSION_NAME" \
+                "$FUSION_NAME $STYLE" \
+                "$STYLE" \
+                "fused-font-HT.ttf"
             fi
 
             if [[ "$LIGA_SUFFIX" == "NL" ]]; then
