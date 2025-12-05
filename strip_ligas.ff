@@ -1,0 +1,49 @@
+#!/usr/bin/fontforge
+
+Open($1)
+
+# 1. Collect Phase
+lookups = GetLookups("GSUB")
+num_lookups = SizeOf(lookups)
+to_remove = Array(num_lookups)
+remove_count = 0
+
+i = 0
+while (i < num_lookups)
+  lookup_name = lookups[i]
+  # info[2] is features array
+  features = GetLookupInfo(lookup_name)[2]
+  feat_count = SizeOf(features)
+  
+  j = 0
+  found_calt = 0
+  while (j < feat_count)
+    # feature item: [tag, script, lang]
+    tag = features[j][0]
+    if (tag == "calt")
+      found_calt = 1
+      break
+    endif
+    j = j + 1
+  endloop
+  
+  if (found_calt)
+    to_remove[remove_count] = lookup_name
+    remove_count = remove_count + 1
+  endif
+  
+  i = i + 1
+endloop
+
+# 2. Removal Phase
+Print("Found " + ToString(remove_count) + " 'calt' lookups to remove.")
+
+k = 0
+while (k < remove_count)
+  target = to_remove[k]
+  RemoveLookup(target)
+  k = k + 1
+endloop
+
+Generate($1)
+Close()
