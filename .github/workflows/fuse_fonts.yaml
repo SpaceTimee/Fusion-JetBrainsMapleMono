@@ -234,7 +234,7 @@ jobs:
         with:
           sparse-checkout: |
             fuse_fonts.ff
-            strip_ligas.ff
+            strip_ligas.py
             OFL.txt
 
       - name: Generate Version
@@ -338,7 +338,7 @@ jobs:
             fi
 
             if [[ "$LIGA_SUFFIX" == "NL" ]]; then
-              fontforge "strip_ligas.ff" "fused-font-HT.ttf"
+              fontforge -lang=py -script "strip_ligas.py" "fused-font-HT.ttf"
             fi
 
             ttx "fused-font-HT.ttf"
