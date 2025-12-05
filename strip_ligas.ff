@@ -2,14 +2,25 @@
 
 Open($1)
 
-foreach lookup in GetLookups("GSUB")
-  foreach feature in GetLookupInfo(lookup)[2]
-    if (feature[0] == "calt")
+lookups = GetLookups("GSUB")
+Print("DEBUG: Found " + ToString(SizeOf(lookups)) + " GSUB lookups in " + $1)
+
+count_removed = 0
+foreach lookup in lookups
+  info = GetLookupInfo(lookup)
+  features = info[2]
+  foreach feature in features
+    tag = feature[0]
+    if (tag == "calt")
+      Print("DEBUG: Removing 'calt' lookup: " + lookup)
       RemoveLookup(lookup)
+      count_removed = count_removed + 1
       break
     endif
   endloop
 endloop
+
+Print("DEBUG: Removed " + ToString(count_removed) + " lookups.")
 
 Generate($1)
 Close()
