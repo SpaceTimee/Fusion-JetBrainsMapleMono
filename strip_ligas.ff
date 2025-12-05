@@ -3,52 +3,22 @@
 Open($1)
 
 lookups = GetLookups("GSUB")
-Print("DEBUG: Found " + ToString(SizeOf(lookups)) + " GSUB lookups in " + $1)
-
-count_removed = 0
 lookup_idx = 0
-foreach lookup in lookups
-  info = GetLookupInfo(lookup)
-  
-  # Print full info for the first 10 lookups to see the structure
-  if (lookup_idx < 10)
-    Print("DEBUG: Lookup [" + ToString(lookup_idx) + "] Name: " + lookup)
-    Print("DEBUG: Full Info: " + ToString(info))
-  endif
 
-  # info[0] is type, info[1] is flags, info[2] is features
-  features = info[2]
-  
-  if (lookup_idx < 10)
-     Print("DEBUG: Features Array: " + ToString(features))
-     Print("DEBUG: Features Size: " + ToString(SizeOf(features)))
-  endif
+while (lookup_idx < SizeOf(lookups))
+  lookup = lookups[lookup_idx]
+  features = GetLookupInfo(lookup)[2]
+  feature_idx = 0
 
-  foreach feature in features
-    # feature is expected to be [tag, script, lang]
-    tag = feature[0]
-    
-    if (lookup_idx < 10)
-      Print("DEBUG: Feature Item: " + ToString(feature))
-      Print("DEBUG: Tag: " + ToString(tag))
-    endif
-
-    # Check for both calt and liga to see if we can find ANY known tags
-    if (tag == "calt")
-      Print("DEBUG: MATCH FOUND: 'calt' in lookup " + lookup)
+  while (feature_idx < SizeOf(features))
+    if (features[feature_idx][0] == "calt")
       RemoveLookup(lookup)
-      count_removed = count_removed + 1
       break
-    elseif (tag == "liga")
-       if (lookup_idx < 10)
-         Print("DEBUG: Found 'liga' (not removing yet, just checking presence)")
-       endif
     endif
+    feature_idx++
   endloop
-  lookup_idx = lookup_idx + 1
+  lookup_idx++
 endloop
-
-Print("DEBUG: Total Removed: " + ToString(count_removed))
 
 Generate($1)
 Close()
