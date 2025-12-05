@@ -8,6 +8,8 @@ num_lookups = SizeOf(lookups)
 to_remove = Array(num_lookups)
 remove_count = 0
 
+Print("DEBUG: Starting collection phase. Total lookups: " + ToString(num_lookups))
+
 i = 0
 while (i < num_lookups)
   lookup_name = lookups[i]
@@ -35,15 +37,18 @@ while (i < num_lookups)
   i = i + 1
 endloop
 
-# 2. Removal Phase
-Print("Found " + ToString(remove_count) + " 'calt' lookups to remove.")
+Print("DEBUG: Collection complete. Found " + ToString(remove_count) + " 'calt' lookups.")
 
+# 2. Removal Phase
 k = 0
 while (k < remove_count)
   target = to_remove[k]
+  Print("DEBUG: Removing lookup [" + ToString(k) + "]: " + target)
   RemoveLookup(target)
   k = k + 1
 endloop
 
+Print("DEBUG: All lookups removed. Generating font...")
 Generate($1)
+Print("DEBUG: Font generated. Closing...")
 Close()
