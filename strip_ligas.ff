@@ -3,21 +3,43 @@
 Open($1)
 
 lookups = GetLookups("GSUB")
-lookup_idx = 0
+num_lookups = SizeOf(lookups)
+# Create an array to store lookups to be removed (max size = total lookups)
+to_remove = Array(num_lookups)
+remove_count = 0
 
-while (lookup_idx < SizeOf(lookups))
-  lookup = lookups[lookup_idx]
+i = 0
+while (i < num_lookups)
+  lookup = lookups[i]
+  # Get features: info[2]
   features = GetLookupInfo(lookup)[2]
-  feature_idx = 0
-
-  while (feature_idx < SizeOf(features))
-    if (features[feature_idx][0] == "calt")
-      RemoveLookup(lookup)
+  feat_count = SizeOf(features)
+  j = 0
+  found = 0
+  
+  while (j < feat_count)
+    if (features[j][0] == "calt")
+      found = 1
       break
     endif
-    feature_idx++
+    j++
   endloop
-  lookup_idx++
+  
+  if (found)
+    to_remove[remove_count] = lookup
+    remove_count++
+  endif
+  
+  i++
+endloop
+
+# Now verify and remove the collected lookups
+Print("Found " + ToString(remove_count) + " 'calt' lookups to remove.")
+
+k = 0
+while (k < remove_count)
+  RemoveLookup(to_remove[k])
+  k++
 endloop
 
 Generate($1)
