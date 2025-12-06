@@ -362,8 +362,10 @@ jobs:
               --urllicense "https://openfontlicense.org"
             gftools drop-hints "fused-font-HT.ttf.fix" "fused-font-XX.ttf.fix"
 
-            ftcli fix "monospace" "fused-font-HT.ttf.fix"
-            ftcli fix "monospace" "fused-font-XX.ttf.fix"
+            if [[ "$NARROW_SUFFIX" != "NR" ]]; then
+              ftcli fix "monospace" "fused-font-HT.ttf.fix"
+              ftcli fix "monospace" "fused-font-XX.ttf.fix"
+            fi
 
             mv "fused-font-HT.ttf.fix" "fused-fonts-HT/$FUSION_ID-$STYLE.ttf"
             mv "fused-font-XX.ttf.fix" "fused-fonts-XX/$FUSION_ID-$STYLE.ttf"
