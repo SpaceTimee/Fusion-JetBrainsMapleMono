@@ -1,6 +1,3 @@
-> [!NOTE]
-> NL (无连字) 版本正在调试中，请等我做好再用 [#19](https://github.com/SpaceTimee/Fusion-JetBrainsMapleMono/issues/19)
-
 <h1 align="center">JetBrains Maple Mono</h1>
 <h3 align="center">- JetBrains Mono + Maple Mono -</h3>
 </br>
