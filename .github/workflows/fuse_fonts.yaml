@@ -260,6 +260,7 @@ jobs:
         with:
           python-version: 3.13
           check-latest: true
+          token: ${{ secrets.GH_TOKEN }}
 
       - name: Build JetBrains
         if: >-
