@@ -15,6 +15,7 @@ on:
         required: false
 
 env:
+  GH_TOKEN: ${{ github.token }}
   FORCE: ${{ github.event.inputs.FORCE }}
   JETBRAINS_GIT_URL: ${{ github.server_url }}/JetBrains/JetBrainsMono.git
   JETBRAINS_LATEST_RELEASE_API_URL: ${{ github.api_url }}/repos/JetBrains/JetBrainsMono/releases/latest
