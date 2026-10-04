@@ -53,8 +53,8 @@ ZSFT: [https://fonts.zeoseven.com/items/521](https://fonts.zeoseven.com/items/52
 ## 实时监测
 最近一次检查更新的时间:
 
-* 北京时间: <!--BJT_TIME-->2026-10-04 06:08:44<!--BJT_TIME-->
-* UTC 时间: <!--UTC_TIME-->2026-10-03 22:08:44<!--UTC_TIME-->
+* 北京时间: <!--BJT_TIME-->2026-10-04 08:36:27<!--BJT_TIME-->
+* UTC 时间: <!--UTC_TIME-->2026-10-04 00:36:27<!--UTC_TIME-->
 
 ## 未来路线
 1. 添加可变字重版本
